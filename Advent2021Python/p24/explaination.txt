@@ -1,0 +1,26 @@
+
+w = read
+x = ((z % 26) + A) != w 
+
+z //= B # NOOP
+z *= (25 * x + 1)
+z += (w + C) * x
+
+when B == 1, A in [12-15]. Thus line 5 is a noop and line 3 is always TRUE for single digit w
+
+B == 1
+
+z *= 26
+z += w + c
+
+
+
+
+
+B == 26
+
+z // 26
+X should == 0
+Thus ((z % 26) + A) == w
+Thus z_popped + A == w_new
+Thus w_old + c_old == w_new - a_new
