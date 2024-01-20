@@ -1,0 +1,185 @@
+import kotlin.math.min
+
+val forthSplits = mutableListOf<List<Int>>()
+val thirdSplits = mutableListOf<List<Int>>()
+
+fun main() {
+    val numbers = listOf(
+        1,
+        3,
+        5,
+        11,
+        13,
+        17,
+        19,
+        23,
+        29,
+        31,
+        41,
+        43,
+        47,
+        53,
+        59,
+        61,
+        67,
+        71,
+        73,
+        79,
+        83,
+        89,
+        97,
+        101,
+        103,
+        107,
+        109,
+        113
+    ) // 516 per group
+    val attempt = Attempt(0, 5, 0)
+    findValids(attempt, numbers, 4)
+    println(forthSplits.size)
+
+    var minEntanglement = 1000000000000L
+    for (a in forthSplits) {
+        println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        val remaining = (numbers.toSet() - a.toSet()).toList()
+        thirdSplits.clear()
+        findValids(Attempt(0, 7, 0), remaining, 3)
+        for (b in thirdSplits) {
+            val finalRemaining = (numbers.toSet() - a.toSet()).toList()
+            if (findEvenSplit(Attempt(0, 6, 0), finalRemaining, 2)) {
+                println(a)
+                println(a.map{it.toLong()}.reduce(Long::times))
+                minEntanglement = min(minEntanglement, a.map{it.toLong()}.reduce(Long::times))
+                println("good")
+            }
+        }
+    }
+    println(minEntanglement)
+}
+
+fun findEvenSplit(attempt: Attempt, remainingNumbers: List<Int>, numWays: Int): Boolean {
+    if (attempt.sumSoFar == remainingNumbers.sum() / numWays) { // Success
+        return true
+    }
+    if (attempt.idx == remainingNumbers.size || attempt.leftSpots == 0 || attempt.sumSoFar > remainingNumbers.sum() / numWays) { // Failure
+        return false
+    }
+    return findEvenSplit(
+        attempt.copy(
+            idx = attempt.idx + 1,
+            leftSpots = attempt.leftSpots - 1,
+            sumSoFar = attempt.sumSoFar + remainingNumbers[attempt.idx],
+            taken = attempt.taken.toMutableList().apply { add(remainingNumbers[attempt.idx]) }
+        ), remainingNumbers, numWays
+    ) ||
+            findEvenSplit(attempt.copy(idx = attempt.idx + 1), remainingNumbers, numWays)
+}
+
+
+fun findValids(attempt: Attempt, remainingNumbers: List<Int>, numWays: Int) {
+    if (attempt.sumSoFar == remainingNumbers.sum() / numWays) { // Success
+        if (numWays == 4) {
+            forthSplits.add(attempt.taken)
+        }
+        if (numWays == 3) {
+            thirdSplits.add(attempt.taken)
+        }
+        return
+    }
+    if (attempt.idx == remainingNumbers.size || attempt.leftSpots == 0 || attempt.sumSoFar > 516) { // Failure
+        return
+    }
+    findValids(
+        attempt.copy(
+            idx = attempt.idx + 1,
+            leftSpots = attempt.leftSpots - 1,
+            sumSoFar = attempt.sumSoFar + remainingNumbers[attempt.idx],
+            taken = attempt.taken.toMutableList().apply { add(remainingNumbers[attempt.idx]) }
+        ), remainingNumbers, numWays
+    )
+    findValids(attempt.copy(idx = attempt.idx + 1), remainingNumbers, numWays)
+}
+
+
+data class Attempt(
+    val idx: Int,
+    val leftSpots: Int,
+    val sumSoFar: Int,
+    val taken: MutableList<Int> = mutableListOf()
+)
+
+//fun main() {
+//    val attempt = Attempt(0, 4, 0)
+//    findValids(attempt)
+//    println(evenSplits.size)
+//
+//    var minEntanglement = 1000000000000L
+//    for (a in evenSplits) {
+//        val remaining = (numbers.toSet() - a.toSet()).toList()
+//        if (findEvenSplit(Attempt(0, 12, 0), remaining)) {
+//            println(a)
+//            println(a.map{it.toLong()}.reduce(Long::times))
+//            minEntanglement = min(minEntanglement, a.map{it.toLong()}.reduce(Long::times))
+//            println("good")
+//        }
+//    }
+//    println(minEntanglement)
+//}
+//
+//fun findEvenSplit(attempt: Attempt, remainingNumbers: List<Int>): Boolean {
+//    if (attempt.sumSoFar == remainingNumbers.sum() / 2) { // Success
+//        return true
+//    }
+//    if (attempt.idx == remainingNumbers.size || attempt.leftSpots == 0 || attempt.sumSoFar > remainingNumbers.sum() / 2) { // Failure
+//        return false
+//    }
+//    return findEvenSplit(
+//        attempt.copy(
+//            idx = attempt.idx + 1,
+//            leftSpots = attempt.leftSpots - 1,
+//            sumSoFar = attempt.sumSoFar + remainingNumbers[attempt.idx],
+//            taken = attempt.taken.toMutableList().apply { add(remainingNumbers[attempt.idx]) }
+//        ), remainingNumbers
+//    ) ||
+//            findEvenSplit(attempt.copy(idx = attempt.idx + 1), remainingNumbers)
+//}
+//
+//
+//fun findValids(attempt: Attempt) {
+//    if (attempt.sumSoFar == numbers.sum() / 3) { // Success
+//        evenSplits.add(attempt.taken)
+//        return
+//    }
+//    if (attempt.idx == numbers.size || attempt.leftSpots == 0 || attempt.sumSoFar > 516) { // Failure
+//        return
+//    }
+//    findValids(
+//        attempt.copy(
+//            idx = attempt.idx + 1,
+//            leftSpots = attempt.leftSpots - 1,
+//            sumSoFar = attempt.sumSoFar + numbers[attempt.idx],
+//            taken = attempt.taken.toMutableList().apply { add(numbers[attempt.idx]) }
+//        )
+//    )
+//    findValids(attempt.copy(idx = attempt.idx + 1))
+//}
+
+    for (a in bestBases) {
+        println(a)
+        for (b in allSets) {
+            if ((a intersect b).isEmpty()) {
+                val ab = a union b
+                for (c in allSets) {
+                    if ((ab intersect c).isEmpty()) {
+                        val abc = ab intersect c
+                        for (d in allSets) {
+                            if ((abc intersect d).isEmpty() && (abc union d).size == numbers.size) {
+                                println(a.reduce { sum, ele -> sum * ele })
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }

@@ -1,0 +1,14 @@
+{a=132, b=10, c=20, d=0}
+[cpy -16 c, jnz 1 c, cpy 76 c, jnz 84 d, inc a, inc d, jnz d -2]
+{a=1320, b=9, c=18, d=0}
+[cpy -16 c, jnz 1 c, cpy 76 c, jnz 84 d, inc a, inc d, jnz d -2]
+{a=11880, b=8, c=16, d=0}
+[cpy -16 c, jnz 1 c, cpy 76 c, jnz 84 d, inc a, inc d, jnz d -2]
+{a=95040, b=7, c=14, d=0}
+[cpy -16 c, jnz 1 c, cpy 76 c, jnz 84 d, inc a, inc d, jnz d -2]
+{a=665280, b=6, c=12, d=0}
+[cpy -16 c, jnz 1 c, cpy 76 c, jnz 84 d, inc a, inc d, jnz d -2]
+{a=3991680, b=5, c=10, d=0}
+[cpy -16 c, jnz 1 c, cpy 76 c, jnz 84 d, inc a, inc d, jnz d -2]
+{a=19958400, b=4, c=8, d=0}
+[cpy -16 c, jnz 1 c, cpy 76 c, jnz 84 d, inc a, inc d, jnz d -2]

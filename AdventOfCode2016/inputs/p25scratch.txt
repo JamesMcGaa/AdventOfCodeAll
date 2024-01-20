@@ -1,0 +1,58 @@
+d = a
+c = 15
+
+b, c = 0, d = 170 * c
+
+a = d
+b = a
+a = 0
+c = 2
+jnz b 2
+jnz 1 6
+dec b
+dec c
+jnz c -4
+inc a
+jnz 1 -7
+cpy 2 b
+jnz c 2
+jnz 1 4
+dec b
+dec c
+jnz 1 -4
+jnz 0 0
+out b
+jnz a -19
+jnz 1 -21
+
+
+cpy a d
+cpy 15 c
+cpy 170 b -------------  b, c = 0, d = 170 * c
+inc d
+dec b
+jnz b -2
+dec c
+jnz c -5 --------------
+cpy d a
+jnz 0 0   ----- NOOP
+cpy a b
+cpy 0 a
+cpy 2 c
+jnz b 2
+jnz 1 6
+dec b
+dec c
+jnz c -4
+inc a
+jnz 1 -7
+cpy 2 b
+jnz c 2
+jnz 1 4
+dec b
+dec c
+jnz 1 -4
+jnz 0 0
+out b
+jnz a -19
+jnz 1 -21
