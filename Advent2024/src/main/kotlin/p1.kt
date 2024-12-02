@@ -5,13 +5,11 @@ fun main() {
     val left = mutableListOf<Int>()
     val right = mutableListOf<Int>()
     File("inputs/input1.txt").forEachLine {
-        val pair = it.split(" ").filter {it.isNotBlank()}.map {num -> num.toInt()}
+        line ->
+        val pair = line.split(" ").filter {it.isNotBlank()}.map {num -> num.toInt()}
         left.add(pair[0])
         right.add(pair[1])
     }
-
-    println(left)
-    println(right)
 
     left.sort()
     right.sort()
@@ -23,6 +21,6 @@ fun main() {
         counterB += id * right.count { it == id }
     }
 
-    println(counterA)
-    println(counterB)
+    println("Counter A: $counterA")
+    println("Counter B: $counterB")
 }
