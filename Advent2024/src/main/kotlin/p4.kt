@@ -5,7 +5,7 @@ const val MAS = "MAS"
 
 fun main() {
     var counterA = 0
-    var counts = mutableMapOf<Pair<Int, Int>, Int>()
+    val counts = mutableMapOf<Pair<Int, Int>, Int>()
     val grid = File("inputs/input4.txt").readLines()
     for (x in grid.indices) {
         for (y in grid[x].indices) {
@@ -13,10 +13,18 @@ fun main() {
             countAtPoint(x, y, grid, MAS, counts = counts)
         }
     }
-    println(counterA)
-    println(counts.count { entry -> entry.value >= 2 })
+    println("Part A: $counterA")
+    println("Part B: ${counts.count { entry -> entry.value >= 2 }}")
 }
 
+/**
+ * Given the input grid inp and a target string, returns the number of times we can start at (x,y)
+ * And find the target
+ *
+ * Optionally for part B, if "counts" is provided we store a map of the midpoints and each time they
+ * midpoint for a path. Implicitly in this case we have to disable UP-DOWN and LEFT-RIGHT counts as we
+ * are doing the X-MAS case.
+ */
 fun countAtPoint(x: Int, y: Int, inp: List<String>, target: String, counts: MutableMap<Pair<Int, Int>, Int>?): Int {
     var count = 0
 
@@ -41,15 +49,15 @@ fun countAtPoint(x: Int, y: Int, inp: List<String>, target: String, counts: Muta
     for (dir in dirs) {
         var attempt = ""
         for (len in target.indices) {
-            var projX = x + len * dir[0]
-            var projY = y + len * dir[1]
+            val projX = x + len * dir[0]
+            val projY = y + len * dir[1]
             attempt += safeIndex(projX, projY, inp)
         }
         if (attempt == target) {
             count += 1
             if (counts != null) {
-                var projX = x + (target.length / 2) * dir[0]
-                var projY = y + (target.length / 2) * dir[1]
+                val projX = x + (target.length / 2) * dir[0]
+                val projY = y + (target.length / 2) * dir[1]
                 counts[Pair(projX, projY)] = counts.getOrDefault(Pair(projX, projY), 0) + 1
             }
         }

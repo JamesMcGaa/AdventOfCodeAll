@@ -35,7 +35,7 @@ const val FLIPPED_GUARD = -2
  */
 fun run(flippedPair: Pair<Int, Int>?, debugFlag: Boolean = false): Int {
     val obstacles = mutableSetOf<Pair<Int, Int>>()
-    val seen = mutableSetOf<Pair<Int, Int>>()
+    val guardPosHistory = mutableSetOf<Pair<Int, Int>>()
     val guardHistory = mutableSetOf<Guard>()
     val input = File("inputs/input6.txt").readLines()
     lateinit var guard: Guard
@@ -47,7 +47,7 @@ fun run(flippedPair: Pair<Int, Int>?, debugFlag: Boolean = false): Int {
             }
             if (ch == '^') {
                 guard = Guard(r, c, Direction.UP)
-                seen.add(Pair(r,c))
+                guardPosHistory.add(guard.pos)
                 guardHistory.add(guard)
             }
         }
@@ -65,7 +65,7 @@ fun run(flippedPair: Pair<Int, Int>?, debugFlag: Boolean = false): Int {
         if (proj in obstacles) {
             guard = guard.rotate()
         } else {
-            seen.add(guard.project().pos)
+            guardPosHistory.add(guard.project().pos)
             guard = guard.project()
         }
         if (guard in guardHistory) {
@@ -83,7 +83,7 @@ fun run(flippedPair: Pair<Int, Int>?, debugFlag: Boolean = false): Int {
                     in obstacles -> {
                         print("#")
                     }
-                    in seen -> {
+                    in guardPosHistory -> {
                         print("X")
                     }
                     else -> {
@@ -96,7 +96,7 @@ fun run(flippedPair: Pair<Int, Int>?, debugFlag: Boolean = false): Int {
     }
 
     // Offset by -1 to remove out of bounds final move
-    return seen.size - 1
+    return guardPosHistory.size - 1
 }
 
 data class Guard(
