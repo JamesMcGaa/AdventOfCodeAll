@@ -49,6 +49,7 @@ fun main() {
     }
     println("Part B (sort): $partBSimpleSort")
 
+    // Kahn's algorithm
     val partBTopologicalSort = incorrectUpdates.sumOf { update ->
         midElementSortedTopological(inbound, update)
     }
