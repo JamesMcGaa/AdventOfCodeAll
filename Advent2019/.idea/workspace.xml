@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4782b5d4-c715-487c-97c8-ff10619ffb82" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Advent2024/src/main/kotlin/p4.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Advent2024/src/main/kotlin/p4.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Advent2024/src/main/kotlin/p6.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Advent2024/src/main/kotlin/p6.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Advent2024/inputs/input5.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Advent2024/inputs/input5.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Advent2024/src/main/kotlin/p5.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Advent2024/src/main/kotlin/p5.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
