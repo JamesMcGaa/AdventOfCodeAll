@@ -3,12 +3,12 @@ import kotlin.time.measureTimedValue
 
 fun main() {
     val timedA = measureTimedValue {
-        partA(12, 2)
+        executeIntcode(12, 2)
     }
     val timedB = measureTimedValue {
         for (a in 0..99) {
             for (b in 0 .. 99) {
-                if (partA(a,b) ==19690720) {
+                if (executeIntcode(a,b) ==19690720) {
                     return@measureTimedValue 100*a + b
                 }
             }
@@ -18,7 +18,7 @@ fun main() {
     println("Part B: $timedB")
 }
 
-fun partA(a: Int, b: Int): Int {
+fun executeIntcode(a: Int, b: Int): Int {
     val grid = File("inputs/input2.txt").readLines()[0].split(",").map { it.toInt() }.toMutableList()
     var pointer = 0
     grid[1] = a
