@@ -11,27 +11,27 @@ data class Coord(
     operator fun minus(other: Coord): Coord {
         return Coord(x - other.x, y - other.y)
     }
-
 }
 
-val X = File("inputs/input8.txt").readLines().size
-val Y = File("inputs/input8.txt").readLines()[0].length
+val INPUT_8 = File("inputs/input8.txt").readLines()
+val X = INPUT_8.size
+val Y = INPUT_8[0].length
 
 fun main() {
     val grid = mutableMapOf<Coord, Char>()
+
     val antennae = mutableMapOf<Char, MutableSet<Coord>>()
     val antinodesA = mutableSetOf<Coord>()
     val antinodesB = mutableSetOf<Coord>()
-    File("inputs/input8.txt").readLines().forEachIndexed { r, s ->
+    INPUT_8.forEachIndexed { r, s ->
         s.forEachIndexed { c, ch ->
             val coord = Coord(r, c)
             grid[coord] = ch
-            if (ch != '.') {
+            if (ch.isLetter() || ch.isDigit()) {
                 antennae[ch] = antennae.getOrDefault(ch, mutableSetOf(coord)).apply { add(coord) }
             }
         }
     }
-
 
     antennae.forEach { (_, coords) ->
         coords.forEach { first ->
@@ -39,30 +39,47 @@ fun main() {
                 if (first != second) {
                     val deltaToFirst = (first - second)
                     val deltaToSecond = (second - first)
-                    var reflected1 = first + deltaToFirst
-                    var reflected2 = second + deltaToSecond
+                    var projectedFromFirst = first + deltaToFirst
+                    var projectedFromSecond = second + deltaToSecond
 
-                    if (coordInBounds(reflected1)) {
-                        antinodesA.add(reflected1)
+                    // Part A
+                    if (coordInBounds(projectedFromFirst)) {
+                        antinodesA.add(projectedFromFirst)
                     }
-                    if (coordInBounds(reflected2)) {
-                        antinodesA.add(reflected2)
+                    if (coordInBounds(projectedFromSecond)) {
+                        antinodesA.add(projectedFromSecond)
                     }
-                    while (coordInBounds(reflected1)) {
-                        antinodesB.add(reflected1)
-                        reflected1 += deltaToFirst
+
+                    // Part B
+                    antinodesB.add(first)
+                    antinodesB.add(second)
+                    while (coordInBounds(projectedFromFirst)) {
+                        antinodesB.add(projectedFromFirst)
+                        projectedFromFirst += deltaToFirst
                     }
-                    while (coordInBounds(reflected2)) {
-                        antinodesB.add(reflected2)
-                        reflected2 += deltaToSecond
+                    while (coordInBounds(projectedFromSecond)) {
+                        antinodesB.add(projectedFromSecond)
+                        projectedFromSecond += deltaToSecond
                     }
                 }
             }
         }
     }
 
-    println(antinodesA.size)
-    println(antinodesB.size)
+    for (i in 0..<X) {
+        for (j in 0..<Y) {
+            if (Coord(i,j) in antinodesB) {
+                print("#")
+            }
+            else {
+                print(grid[Coord(i,j)])
+            }
+        }
+        print("\n")
+    }
+
+    println("Part A: ${antinodesA.size}")
+    println("Part B: ${antinodesB.size}")
 }
 
-fun coordInBounds(coord: Coord): Boolean = coord.x in 0 until X && coord.y in 0 until Y
+fun coordInBounds(coord: Coord): Boolean = coord.x in 0..<X && coord.y in 0..<Y
