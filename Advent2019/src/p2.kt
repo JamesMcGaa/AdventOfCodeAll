@@ -1,39 +1,28 @@
 import java.io.File
+import kotlin.time.measureTimedValue
 
 fun main() {
-    partA()
-//    partB()
-}
-
-fun partB() {
-    val grid = File("inputs/input2.txt").readLines()[0].split(",").map { ABVal(0,0,it.toInt()) }.toMutableList()
-    var pointer = 0
-    grid[1] = ABVal(1,0,0)
-    grid[2] = ABVal(0,1,0)
-    while (true) {
-        when (grid[pointer].raw) {
-            1 -> {
-                grid[grid[pointer + 3]] = grid[grid[pointer + 1]] + grid[grid[pointer + 2]]
-            }
-
-            2 -> {
-                grid[grid[pointer + 3]] = grid[grid[pointer + 1]] * grid[grid[pointer + 2]]
-            }
-            99 -> {
-                break
-            }
-            else -> throw Exception("Illegal opcode")
-        }
-        pointer += 4
+    val timedA = measureTimedValue {
+        partA(12, 2)
     }
-    println("Part A: $grid[0]")
+    val timedB = measureTimedValue {
+        for (a in 0..99) {
+            for (b in 0 .. 99) {
+                if (partA(a,b) ==19690720) {
+                    return@measureTimedValue 100*a + b
+                }
+            }
+        }
+    }
+    println("Part A: $timedA")
+    println("Part B: $timedB")
 }
 
-fun partA() {
+fun partA(a: Int, b: Int): Int {
     val grid = File("inputs/input2.txt").readLines()[0].split(",").map { it.toInt() }.toMutableList()
     var pointer = 0
-    grid[1] = 12
-    grid[2] = 2
+    grid[1] = a
+    grid[2] = b
     while (true) {
         when (grid[pointer]) {
             1 -> {
@@ -50,9 +39,19 @@ fun partA() {
         }
         pointer += 4
     }
-    println("Part A: $grid[0]")
+    return grid[0]
 }
 
+
+/**
+ * Relic from trying to solve this for general a,b
+ *
+ * It pays to read the problem...
+ *
+ * Note this would still have issues, as arbitrary a,b could grow exponentially in a,b
+ * as well as overwrite operators
+ */
+@Suppress("unused")
 data class ABVal(
     val a: Int,
     val b: Int,
