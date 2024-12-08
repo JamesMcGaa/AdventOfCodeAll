@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4782b5d4-c715-487c-97c8-ff10619ffb82" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/p4.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/p3.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/p3.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Advent2024/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Advent2024/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Advent2024/inputs/input8.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Advent2024/inputs/input8.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Advent2024/src/main/kotlin/p8.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Advent2024/src/main/kotlin/p8.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +39,7 @@
     "Kotlin.P1Kt.executor": "Run",
     "Kotlin.P2Kt.executor": "Run",
     "Kotlin.P3Kt.executor": "Run",
+    "Kotlin.P4Kt.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
