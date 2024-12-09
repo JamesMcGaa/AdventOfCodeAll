@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4782b5d4-c715-487c-97c8-ff10619ffb82" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/inputs/input5.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/p5.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/p6.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/p3.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/p3.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inputs/input6.txt" beforeDir="false" afterPath="$PROJECT_DIR$/inputs/input6.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +42,7 @@
     "Kotlin.P3Kt.executor": "Run",
     "Kotlin.P4Kt.executor": "Run",
     "Kotlin.P5Kt.executor": "Run",
+    "Kotlin.P6Kt.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
