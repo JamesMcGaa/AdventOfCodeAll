@@ -41,13 +41,14 @@ class WireCoord(
 fun main() {
     val input = File("inputs/input3.txt").readLines()
     val wire1 = populateWiresFromString(input[0])
-    val wire2 = populateWiresFromString(input[0])
+    val wire2 = populateWiresFromString(input[1])
 
     val intersection = wire1.keys intersect wire2.keys
     println(intersection.minOf { abs(it.x) + abs(it.y) })
     println(intersection.minOf { abs(wire1[it]!!.stepsTaken) + abs(wire2[it]!!.stepsTaken) })
 }
 
+// Use a map so we can recover the original object
 fun populateWiresFromString(inp: String): Map<WireCoord, WireCoord> {
     val dirMap = mutableMapOf(
         'R' to Coord(0, 1),
@@ -63,7 +64,10 @@ fun populateWiresFromString(inp: String): Map<WireCoord, WireCoord> {
         val amount = it.substring(1).toInt()
         for (i in 0 until amount) {
             current = (current + dir).apply { stepsTaken = current.stepsTaken + 1 }
-            wire[current] = current
+            // Only take into account the first visit
+            if (!wire.contains(current)) {
+                wire[current] = current
+            }
         }
     }
     return wire
