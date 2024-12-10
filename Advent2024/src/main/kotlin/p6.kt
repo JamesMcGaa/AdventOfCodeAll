@@ -1,8 +1,8 @@
 import java.io.File
 
 val INPUT = File("inputs/input6.txt").readLines()
-val R: Int = INPUT.size
-val C: Int = INPUT[0].length
+val R: Int = INPUT_10.size
+val C: Int = INPUT_10[0].length
 
 fun main() {
 
