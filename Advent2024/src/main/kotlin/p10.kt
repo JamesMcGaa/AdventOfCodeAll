@@ -14,33 +14,28 @@ fun main() {
         }
     }
 
-    var partA = 0
-    for (potentialStart in potentialStarts) {
-        val seen = mutableSetOf<Coord>()
-        partA += dfs(potentialStart, -1, grid, seen)
-    }
-    println(partA)
+    val partA = potentialStarts.sumOf { dfs(it, -1, grid, mutableSetOf()) }
+    val partB = potentialStarts.sumOf { dfs(it, -1, grid, mutableSetOf(), isPartB = true) }
+    println("Part A: $partA")
+    println("Part B: $partB")
 }
 
-fun dfs(current: Coord, prevVal: Int, grid: Map<Coord, Int>, seen: MutableSet<Coord>): Int {
+fun dfs(current: Coord, prevVal: Int, grid: Map<Coord, Int>, seen: MutableSet<Coord>, isPartB: Boolean = false): Int {
     if (current in seen || current.x < 0 || current.y < 0 || current.x >= INPUT_10.size || current.y >= INPUT_10[0].length || grid[current]!! != prevVal + 1) {
         return 0
     } else if (grid[current]!! == 9) {
-        seen.add(current)
+        if (!isPartB) {
+            seen.add(current)
+        }
         return 1
-    }
-    else {
-        seen.add(current)
-        return dfs(current.copy(x = current.x - 1), prevVal + 1, grid, seen) + dfs(
-            current.copy(x = current.x + 1),
-            prevVal + 1,
-            grid,
-            seen
-        ) + dfs(
-            current.copy(y = current.y - 1),
-            prevVal + 1, grid,
-            seen
-        ) + dfs(current.copy(y = current.y + 1), prevVal + 1, grid, seen)
+    } else {
+        if (!isPartB) {
+            seen.add(current)
+        }
+        return dfs(current.copy(x = current.x - 1), prevVal + 1, grid, seen, isPartB) +
+                dfs(current.copy(x = current.x + 1), prevVal + 1, grid, seen, isPartB) +
+                dfs(current.copy(y = current.y - 1), prevVal + 1, grid, seen, isPartB) +
+                dfs(current.copy(y = current.y + 1), prevVal + 1, grid, seen, isPartB)
     }
 
 }
