@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4782b5d4-c715-487c-97c8-ff10619ffb82" name="Changes" comment="" />
+    <list default="true" id="4782b5d4-c715-487c-97c8-ff10619ffb82" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/inputs/input7.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inputs/input8.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/p7.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/p8.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Advent2024/inputs/input11.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Advent2024/src/main/kotlin/p11.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/p5.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/p5.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -39,6 +48,8 @@
     "Kotlin.P4Kt.executor": "Run",
     "Kotlin.P5Kt.executor": "Run",
     "Kotlin.P6Kt.executor": "Run",
+    "Kotlin.P7Kt.executor": "Run",
+    "Kotlin.P8Kt.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",

@@ -3,7 +3,8 @@ import java.io.File
 fun main() {
     val input = File("inputs/input5.txt").readLines()[0].split(",").map { it.toInt() }.toMutableList()
     val computer = IntcodeP5(input)
-    computer.executeIntcode(1)
+    computer.inputs.add(1)
+    computer.executeIntcode(shouldPrintOutputs = true)
     println("^^^ Part A ^^^")
 
     println()
@@ -11,14 +12,21 @@ fun main() {
     println()
 
     computer.reset()
-    computer.executeIntcode(5)
+    computer.inputs.add(5)
+    computer.executeIntcode(shouldPrintOutputs = true)
     println("^^^ Part B ^^^")
 }
 
-class IntcodeP5(private var instructions: MutableList<Int>) {
+open class IntcodeP5(private var instructions: MutableList<Int>) {
     private val originalInstructions = instructions.toMutableList()
 
     private var executionPointer = 0
+
+    var lastOutput = 0
+
+    val inputs = mutableListOf<Int>()
+
+    var isHalted = false
 
     /**
      * Mode is 1 for immediate, 0 for position
@@ -31,12 +39,17 @@ class IntcodeP5(private var instructions: MutableList<Int>) {
         }
     }
 
-    fun reset() {
+    open fun reset() {
+        inputs.clear()
         executionPointer = 0
         instructions = originalInstructions.toMutableList()
     }
 
-    fun executeIntcode(inputValue: Int) {
+    open fun getInput(): Int {
+        return inputs[0]
+    }
+
+    open fun executeIntcode(shouldPrintOutputs: Boolean = false, returnOnOutput: Boolean = false): Int {
         while (true) {
             val ins = instructions[executionPointer]
             val opcode = ins % 100
@@ -60,14 +73,18 @@ class IntcodeP5(private var instructions: MutableList<Int>) {
 
                 // Input
                 3 -> {
-                    instructions[instructions[executionPointer + 1]] = inputValue
+                    instructions[instructions[executionPointer + 1]] = getInput()
                     executionPointer += 2
                 }
 
                 // Output
                 4 -> {
-                    println(instructions[instructions[executionPointer + 1]])
+                    lastOutput = instructions[instructions[executionPointer + 1]]
+                    if (shouldPrintOutputs) println(lastOutput)
                     executionPointer += 2
+                    if (returnOnOutput) {
+                        return lastOutput
+                    }
                 }
 
                 // jumpIfTrue
@@ -112,7 +129,8 @@ class IntcodeP5(private var instructions: MutableList<Int>) {
 
                 // End
                 99 -> {
-                    break
+                    isHalted = true
+                    return lastOutput
                 }
 
                 else -> {
