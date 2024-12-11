@@ -1,3 +1,5 @@
+@file:Suppress("LocalVariableName")
+
 import java.io.File
 
 fun main() {
@@ -7,7 +9,6 @@ fun main() {
     val ROW_SIZE = 25
     val COL_SIZE = 6
     val LAYER_SIZE = ROW_SIZE * COL_SIZE
-    val LAYERS = input.length / LAYER_SIZE
     input.forEachIndexed { index, ch ->
         val unlayered = index % LAYER_SIZE
         val layer = index / LAYER_SIZE
