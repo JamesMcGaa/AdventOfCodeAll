@@ -2,6 +2,8 @@
 
 import java.io.File
 import kotlin.math.abs
+import kotlin.math.acos
+import kotlin.math.sqrt
 
 open class Coord(
     open val x: Int,
@@ -20,7 +22,41 @@ open class Coord(
     }
 
     override fun hashCode(): Int {
-        return x.hashCode() + y.hashCode()
+        return toString().hashCode()
+    }
+
+    override fun toString(): String {
+        return "($x, $y)"
+    }
+
+    operator fun div(denom: Int): Coord {
+        return Coord(x / denom, y / denom)
+    }
+
+    private fun dot(other: Coord): Int {
+        return this.x * other.x + this.y * other.y
+    }
+
+    private fun magnitude() = sqrt((this.x * this.x + this.y * this.y).toDouble())
+
+    // Credits to https://stackoverflow.com/questions/5188561/signed-angle-between-two-3d-vectors-with-same-origin-within-the-same-plane
+
+    // Probably could use https://stackoverflow.com/questions/14066933/direct-way-of-computing-the-clockwise-angle-between-two-vectors too
+    fun clockwiseAngleToVector(other: Coord): Double {
+        val dotProduct = this.dot(other)
+        val magnitudeProduct = this.magnitude() * other.magnitude()
+
+        if (magnitudeProduct == 0.0) {
+            return 0.0 // Handle the case where one or both vectors have zero magnitude
+        }
+
+        val cosTheta = dotProduct / magnitudeProduct
+        var angle = acos(cosTheta) * 57.2958 // Radians to degrees
+        if (this.x * other.y - this.y * other.x > 0) {
+            angle = 360 - angle
+        }
+        return angle
+//        return 360 - angle // Technically this is the CCW dist from this to other until we convert
     }
 }
 
@@ -36,6 +72,7 @@ class WireCoord(
     override operator fun minus(other: Coord): WireCoord {
         return WireCoord(x - other.x, y - other.y)
     }
+
 }
 
 fun main() {
