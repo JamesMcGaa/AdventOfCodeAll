@@ -24,11 +24,10 @@ fun main() {
     }
 
     val priceA = islands.sumOf { island -> perimeter(island) * area(island) }
-    println(priceA)
+    println("Part A: $priceA")
 
     val priceB = islands.sumOf { island -> sides(island) * area(island) }
-    println(islands.map { sides(it) })
-    println(priceB)
+    println("Part B: $priceB")
 }
 
 fun sides(island: MutableSet<Coord>): Int {
