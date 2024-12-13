@@ -9,6 +9,13 @@ open class Coord(
     open val x: Int,
     open val y: Int,
 ) {
+    val neighbors: List<Coord>
+        get() = listOf(
+            Coord(x = x-1, y = y), // UP
+            Coord(x = x+1, y = y), // DOWN
+            Coord(x = x, y = y-1), // LEFT
+            Coord(x = x, y = y+1), // RIGHT
+        )
     open operator fun plus(other: Coord): Coord {
         return Coord(x + other.x, y + other.y)
     }
