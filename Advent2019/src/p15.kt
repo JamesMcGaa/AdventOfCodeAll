@@ -129,9 +129,9 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
      * Mode is 1 for immediate, 0 for position
      */
     private fun smartAccess(idx: Long, mode: Long): Long {
-//        if (idx < 0) {
-//            throw Exception("Negative memory index")
-//        }
+        if (idx < 0) {
+            throw Exception("Negative memory index")
+        }
         return when (mode) {
             1L -> { // immediate mode
                 instructions.getOrDefault(idx, 0L)
@@ -152,9 +152,9 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
     }
 
     private fun smartAccessLiteral(idx: Long, mode: Long): Long {
-//        if (idx < 0) {
-//            throw Exception("Negative memory index")
-//        }
+        if (idx < 0) {
+            throw Exception("Negative memory index")
+        }
         return when (mode) {
             1L -> { // immediate mode
                 instructions.getOrDefault(idx, 0L)

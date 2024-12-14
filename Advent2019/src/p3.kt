@@ -2,7 +2,6 @@
 
 import java.io.File
 import kotlin.math.abs
-import kotlin.math.absoluteValue
 import kotlin.math.acos
 import kotlin.math.sqrt
 
@@ -26,7 +25,7 @@ open class Coord(
     }
 
     override fun equals(other: Any?): Boolean {
-        return this.x == (other as? Coord)?.x && this.y == (other as? Coord)?.y
+        return this.x == (other as? Coord)?.x && this.y == other?.y
     }
 
     override fun hashCode(): Int {
