@@ -119,7 +119,7 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
 
     var executionPointer = 0L
 
-    private var lastOutput = 0L
+    var lastOutput = 0L
 
     private var isHalted = false
 
@@ -129,20 +129,20 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
      * Mode is 1 for immediate, 0 for position
      */
     private fun smartAccess(idx: Long, mode: Long): Long {
-        if (idx < 0) {
-            throw Exception("Negative memory index")
-        }
+//        if (idx < 0) {
+//            throw Exception("Negative memory index")
+//        }
         return when (mode) {
             1L -> { // immediate mode
-                instructions.getOrDefault(idx, 0)
+                instructions.getOrDefault(idx, 0L)
             }
 
             0L -> { // position
-                instructions.getOrDefault(instructions[idx], 0)
+                instructions.getOrDefault(instructions[idx], 0L)
             }
 
             2L -> { // relative
-                instructions.getOrDefault(instructions[idx]!! + relativeBase, 0)
+                instructions.getOrDefault(instructions[idx]!! + relativeBase, 0L)
             }
 
             else -> {
@@ -152,20 +152,20 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
     }
 
     private fun smartAccessLiteral(idx: Long, mode: Long): Long {
-        if (idx < 0) {
-            throw Exception("Negative memory index")
-        }
+//        if (idx < 0) {
+//            throw Exception("Negative memory index")
+//        }
         return when (mode) {
             1L -> { // immediate mode
-                instructions.getOrDefault(idx, 0)
+                instructions.getOrDefault(idx, 0L)
             }
 
             0L -> { // position
-                instructions.getOrDefault(idx, 0)
+                instructions.getOrDefault(idx, 0L)
             }
 
             2L -> { // relative
-                instructions.getOrDefault(idx, 0) + relativeBase
+                instructions.getOrDefault(idx, 0L) + relativeBase
             }
 
             else -> {
@@ -176,11 +176,13 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
 
     abstract fun getInput(): Long
 
+    open fun outputHook() = Unit
+
     @Suppress("unused")
     open fun reset() {
         executionPointer = 0
         instructions = originalInstructions.toMutableMap()
-        relativeBase = 0
+        relativeBase = 0L
         isHalted = false
         lastOutput = 0L
     }
@@ -223,6 +225,7 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
                     if (returnOnOutput) {
                         return lastOutput
                     }
+                    outputHook()
                 }
 
                 // jumpIfTrue
