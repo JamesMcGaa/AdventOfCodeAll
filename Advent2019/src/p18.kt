@@ -1,4 +1,6 @@
 import java.io.File
+import java.util.BitSet
+import kotlin.math.max
 import kotlin.time.measureTime
 
 data class KeyMazeState(
@@ -37,7 +39,7 @@ data class SplitKeyMazeState(
     val coord2: Coord,
     val coord3: Coord,
     val coord4: Coord,
-    val keys: String,
+    val keys: BitSet,
 ) {
     fun neighbors(graph: MutableMap<Coord, Char>): List<SplitKeyMazeState> {
         val ret = mutableListOf<SplitKeyMazeState>()
@@ -48,7 +50,7 @@ data class SplitKeyMazeState(
                         val good = listOf(neighbor1, neighbor2, neighbor3, neighbor4).all { selectedNeighbor ->
                             val graphVal = graph[selectedNeighbor]
                             if (graphVal == null) return@all false
-                            return@all graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && graphVal.toLowerCase() in keys)
+                            return@all graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && keys.get(graphVal.toLowerCase() - 'a'))
                         }
                         if (good) {
                             val newKeys =
@@ -95,22 +97,22 @@ fun partB(): Int {
     }
     val keyAlphabetSize = graph.values.toSet().filter { it.isLowerCase() }.size
 
-    val start = SplitKeyMazeState(origins[0],origins[1],origins[2],origins[3],"")
+    var keyThreshold = mutableMapOf<Int, Int>()
+    val start = SplitKeyMazeState(origins[0],origins[1],origins[2],origins[3], BitSet(keyAlphabetSize))
     val seen = mutableSetOf<SplitKeyMazeState>(start)
     var frontier = mutableSetOf<SplitKeyMazeState>(start)
     var iterations = 0
     while (frontier.isNotEmpty()) {
-        if (iterations % 10 == 0) {
-            println(seen.size)
-        }
+        println("Iterations: $iterations, Seen Size: ${seen.size}, Frontier Size: ${frontier.size}, Key Treshold: ${keyThreshold[iterations-1]}")
         val newFrontier = mutableSetOf<SplitKeyMazeState>()
+        keyThreshold[iterations] = max(keyThreshold.getOrDefault(iterations - 1, 0), frontier.maxOf {it.keys.length()})
         iterations++
         frontier.forEach { point ->
             point.neighbors(graph).forEach { neighbor ->
-                if (neighbor !in seen) {
+                if (neighbor !in seen && neighbor.keys.length() >= keyThreshold.getOrDefault(iterations - 2, 0)) {
                     seen.add(neighbor)
                     newFrontier.add(neighbor)
-                    if (neighbor.keys.length == keyAlphabetSize) {
+                    if (neighbor.keys.length() == keyAlphabetSize) {
                         println("Part B: $iterations")
                         return iterations
                     }
@@ -123,8 +125,13 @@ fun partB(): Int {
 }
 
 // Faster with bit tricks
-fun keysWithMultipleNewKeys(keys: String, newKeys: List<Char>): String {
-    return keys.toCharArray().toMutableSet().apply { addAll(newKeys) }.toList().sorted().joinToString("")
+fun keysWithMultipleNewKeys(keys: BitSet, newKeys: List<Char>): BitSet {
+    val newBitset = keys.clone() as BitSet
+    newKeys.forEach { ch ->
+        val idx = (ch - 'a').toInt()
+        newBitset.set(idx, true)
+    }
+    return newBitset
 }
 
 // Faster with bit tricks

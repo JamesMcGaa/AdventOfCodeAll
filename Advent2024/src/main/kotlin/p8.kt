@@ -1,9 +1,21 @@
 import java.io.File
 
 data class Coord(
-    val x: Int,
-    val y: Int,
+    var x: Int,
+    var y: Int,
 ) {
+    val neighbors: Set<Coord>
+        get() = setOf(
+            Coord(x = x-1, y = y), // UP
+            Coord(x = x+1, y = y), // DOWN
+            Coord(x = x, y = y-1), // LEFT
+            Coord(x = x, y = y+1), // RIGHT
+            Coord(x = x+1, y = y+1), // RIGHT
+            Coord(x = x-1, y = y-1), // RIGHT
+            Coord(x = x+1, y = y-1), // RIGHT
+            Coord(x = x-1, y = y+1), // RIGHT
+        )
+
     operator fun plus(other: Coord): Coord {
         return Coord(x + other.x, y + other.y)
     }
