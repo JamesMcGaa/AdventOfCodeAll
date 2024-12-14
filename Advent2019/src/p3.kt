@@ -25,7 +25,7 @@ open class Coord(
     }
 
     override fun equals(other: Any?): Boolean {
-        return this.x == (other as? Coord)?.x && this.y == other?.y
+        return this.x == (other as? Coord)?.x && this.y == other.y
     }
 
     override fun hashCode(): Int {
