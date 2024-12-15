@@ -1,29 +1,5 @@
+import Utils.Coord
 import java.io.File
-
-data class Coord(
-    var x: Int,
-    var y: Int,
-) {
-    val neighbors: Set<Coord>
-        get() = setOf(
-            Coord(x = x-1, y = y), // UP
-            Coord(x = x+1, y = y), // DOWN
-            Coord(x = x, y = y-1), // LEFT
-            Coord(x = x, y = y+1), // RIGHT
-            Coord(x = x+1, y = y+1), // RIGHT
-            Coord(x = x-1, y = y-1), // RIGHT
-            Coord(x = x+1, y = y-1), // RIGHT
-            Coord(x = x-1, y = y+1), // RIGHT
-        )
-
-    operator fun plus(other: Coord): Coord {
-        return Coord(x + other.x, y + other.y)
-    }
-
-    operator fun minus(other: Coord): Coord {
-        return Coord(x - other.x, y - other.y)
-    }
-}
 
 val INPUT_8 = File("inputs/input8.txt").readLines()
 val X = INPUT_8.size
