@@ -3,6 +3,7 @@
 import java.io.File
 import java.util.BitSet
 import kotlin.collections.set
+import kotlin.math.min
 import kotlin.time.measureTime
 
 fun partBPrecalculated(): Int {
@@ -268,7 +269,7 @@ data class SplitKeyMazeState(
         val ret = mutableListOf<SplitKeyMazeState>()
         coord1.neighbors.forEach { neighbor1 ->
             val graphVal = graph[neighbor1] ?: return@forEach
-            if (graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && keys.get(graphVal.toLowerCase() - 'a'))) {
+            if (graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && keys.get(graphVal.lowercaseChar() - 'a'))) {
                 val newKeys =
                     listOf(neighbor1).mapNotNull { graph[it] }.filter { it.isLowerCase() }
                 ret.add(
@@ -278,7 +279,7 @@ data class SplitKeyMazeState(
         }
         coord2.neighbors.forEach { neighbor2 ->
             val graphVal = graph[neighbor2] ?: return@forEach
-            if (graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && keys.get(graphVal.toLowerCase() - 'a'))) {
+            if (graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && keys.get(graphVal.lowercaseChar() - 'a'))) {
                 val newKeys =
                     listOf(neighbor2).mapNotNull { graph[it] }.filter { it.isLowerCase() }
                 ret.add(
@@ -288,7 +289,7 @@ data class SplitKeyMazeState(
         }
         coord3.neighbors.forEach { neighbor3 ->
             val graphVal = graph[neighbor3] ?: return@forEach
-            if (graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && keys.get(graphVal.toLowerCase() - 'a'))) {
+            if (graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && keys.get(graphVal.lowercaseChar() - 'a'))) {
                 val newKeys =
                     listOf(neighbor3).mapNotNull { graph[it] }.filter { it.isLowerCase() }
                 ret.add(
@@ -298,7 +299,7 @@ data class SplitKeyMazeState(
         }
         coord4.neighbors.forEach { neighbor4 ->
             val graphVal = graph[neighbor4] ?: return@forEach
-            if (graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && keys.get(graphVal.toLowerCase() - 'a'))) {
+            if (graphVal == '.' || graphVal.isLowerCase() || (graphVal.isUpperCase() && keys.get(graphVal.lowercaseChar() - 'a'))) {
                 val newKeys =
                     listOf(neighbor4).mapNotNull { graph[it] }.filter { it.isLowerCase() }
                 ret.add(
@@ -389,6 +390,7 @@ fun partBPrunedDFS(): Int {
             recurse.add(recursionResult)
         }
         memo[current] = recurse.minOrNull() ?: INFINITY
+        currentBest = min(currentBest, memo[current]!!)
         seen.remove(current)
         return memo[current]!!
     }
@@ -527,7 +529,7 @@ data class KeyMazeState(
                 }
 
                 graphVal.isUpperCase() -> {
-                    if (graphVal.toLowerCase() in keys) {
+                    if (graphVal.lowercaseChar() in keys) {
                         ret.add(KeyMazeState(neighbor, keys))
                     }
                 }

@@ -42,12 +42,12 @@ data class DirectionCoord(
 }
 
 fun main() {
-    val grid = Utils.readAsGrid("inputs/input16.txt", null, { it })
+    val grid = Utils.readAsGrid("inputs/input16.txt", null) { it }
     val nodes = grid.filterValues { it != '#' }.keys
     val start = Utils.findFirstIdx('S', grid)
     val end = Utils.findFirstIdx('E', grid)
     Utils.printGrid(grid)
-    val INFINITY = Int.MAX_VALUE - 10000
+    val infinity = Int.MAX_VALUE
 
     fun dijkstra(start: DirectionCoord): Int {
         val dist = mutableMapOf<DirectionCoord, Int>()
@@ -56,18 +56,18 @@ fun main() {
         for (dir in Direction.entries) {
             nodes.forEach {
                 allNodes.add(DirectionCoord(it, dir))
-                dist[DirectionCoord(it, dir)] = INFINITY
+                dist[DirectionCoord(it, dir)] = infinity
                 prev[DirectionCoord(it, dir)] = mutableSetOf()
             }
             dist[DirectionCoord(end, dir)] = 0
         }
-        val Q = allNodes.toMutableSet()
+        val queue = allNodes.toMutableSet()
 
 
-        while (Q.isNotEmpty()) {
-            val min = Q.minBy { dist[it]!! }
-            Q.remove(min)
-            (min.neighbors() intersect Q).forEach { unrelaxedNeighbor ->
+        while (queue.isNotEmpty()) {
+            val min = queue.minBy { dist[it]!! }
+            queue.remove(min)
+            (min.neighbors() intersect queue).forEach { unrelaxedNeighbor ->
                 val altDist = dist[min]!! + min.dist(unrelaxedNeighbor)
                 if (altDist < dist[unrelaxedNeighbor]!!) {
                     dist[unrelaxedNeighbor] = altDist
@@ -79,14 +79,10 @@ fun main() {
             }
         }
 
-        println(prev)
         val output = mutableListOf<DirectionCoord>()
-        var stack = mutableListOf<DirectionCoord>()
-        val seen = mutableSetOf<DirectionCoord>()
-        for (dir in Direction.entries) {
-            stack.add(start)
-            seen.add(start)
-        }
+        var stack = mutableListOf<DirectionCoord>(start)
+        val seen = mutableSetOf<DirectionCoord>(start)
+
         while (stack.isNotEmpty()) {
             val last = stack.removeLast()
             output.add(last)
@@ -94,71 +90,9 @@ fun main() {
             stack.addAll(new - seen)
             seen.addAll(new)
         }
-        println(output.map { it.coord }.toSet().size)
+        println("Part B: ${output.map { it.coord }.toSet().size}")
         return dist[start]!!
     }
 
-    // 621 high
-    println(dijkstra(DirectionCoord(start, Direction.RIGHT)))
-
-
-//    val memo = mutableMapOf<DirectionCoord, Int>()
-//    val seen = mutableSetOf<DirectionCoord>()
-//    /**
-//     * DFS just does not work for undirected weighted edges
-//     */
-//    fun helper(current: DirectionCoord): Int {
-//        if (current.coord == end) {
-//            return 0
-//        }
-//
-//
-//        if (current in memo) {
-//            return memo[current]!!
-//        }
-//
-//        // Prevent looping back on oneself, keep track of positions on the stack but not memoized yet
-//        if (current in seen || grid[current.coord] == null || grid[current.coord] == '#') {
-//            return INFINITY
-//        }
-//        seen.add(current)
-//
-//        // Recurse
-//        val recurse = when (current.dir) {
-//            Direction.UP -> listOf(
-//                1000 + helper(current.copy(dir = Direction.LEFT)),
-//                1000 + helper(current.copy(dir = Direction.RIGHT)),
-//                1 + helper(
-//                    current.copy(coord = current.coord.copy(x = current.coord.x - 1)),
-//                )
-//            )
-//
-//            Direction.DOWN -> listOf(
-//                1000 + helper(current.copy(dir = Direction.LEFT)),
-//                1000 + helper(current.copy(dir = Direction.RIGHT)),
-//                1 + helper(
-//                    current.copy(coord = current.coord.copy(x = current.coord.x + 1)),
-//                )
-//            )
-//
-//            Direction.RIGHT -> listOf(
-//                1000 + helper(current.copy(dir = Direction.UP)),
-//                1000 + helper(current.copy(dir = Direction.DOWN)),
-//                1 + helper(
-//                    current.copy(coord = current.coord.copy(y = current.coord.y + 1)),
-//                )
-//            )
-//
-//            Direction.LEFT -> listOf(
-//                1000 + helper(current.copy(dir = Direction.UP)),
-//                1000 + helper(current.copy(dir = Direction.DOWN)),
-//                1 + helper(
-//                    current.copy(coord = current.coord.copy(y = current.coord.y - 1)),
-//                )
-//            )
-//        }
-//        memo[current] = recurse.minOrNull() ?: INFINITY
-//        seen.remove(current)
-//        return memo[current]!!
-//    }
+    println("Part A: ${dijkstra(DirectionCoord(start, Direction.RIGHT))}")
 }
