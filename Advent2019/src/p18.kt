@@ -1,13 +1,262 @@
+@file:Suppress("unused")
+
 import java.io.File
 import java.util.BitSet
 import kotlin.collections.set
-import kotlin.math.min
 import kotlin.time.measureTime
 
-val input = File("inputs/input18.txt").readLines()
-val X = input.size
-val Y = input[0].length
+fun partBPrecalculated(): Int {
+    val input = File("inputs/input18btrue.txt").readLines()
+    val X = input.size
+    val Y = input[0].length
 
+    val graph = mutableMapOf<Coord, Char>()
+    val keyToCoord = mutableMapOf<Char, Coord>()
+    val graphDoorFree = mutableMapOf<Coord, Char>() // For finding keys
+    val traversableSpots = mutableSetOf<Coord>() // For finding dists between keys
+    val origins = mutableListOf<Coord>()
+    for (i in 0 until X) {
+        for (j in 0 until Y) {
+            if (input[i][j] != '#') {
+                val point = Coord(i, j)
+                var char = input[i][j]
+                if (char == '@') {
+                    origins.add(point)
+                    char = '.'
+                }
+                graph[point] = char
+
+                graphDoorFree[point] = if (!char.isUpperCase()) char else '.'
+                if (char.isLowerCase()) {
+                    keyToCoord[char] = point
+                }
+                if (char != '#') {
+                    traversableSpots.add(point)
+                }
+            }
+        }
+    }
+
+    println("keyToCoord: $keyToCoord")
+    val keyAlphabetSize = graph.values.toSet().filter { it.isLowerCase() }.size
+    val keyCoords = origins.map { findKeysetInQuadrant(it, graphDoorFree).toSet() }
+    val keyVals = keyCoords.map { it.map { graphDoorFree[it]!! }.toSet() }
+    println("keyCoords: $keyCoords")
+    println("keyVals: $keyVals")
+
+    fun dfsDistBetweenKeys(start: Coord, end: Coord): Int {
+        val seen = mutableSetOf<Coord>()
+
+        fun helper(current: Coord, end: Coord): Int? {
+            if (current == end) {
+                return 0
+            }
+            if (current in seen || current !in traversableSpots) {
+                return null
+            }
+            seen.add(current)
+
+            return 1 + (current.neighbors.mapNotNull { helper(it, end) }.minOrNull() ?: 100000)
+
+        }
+        return helper(start, end)!!
+    }
+
+    fun bfsKeysBetweenKeys(start: Coord, end: Coord): BitSet {
+        val seen = mutableSetOf<Coord>()
+        var frontier = mutableSetOf<Pair<Coord, BitSet>>(Pair(start, BitSet(keyAlphabetSize)))
+
+        while (true) {
+            val newFrontier = mutableSetOf<Pair<Coord, BitSet>>()
+            frontier.forEach { (current, keys) ->
+                current.neighbors.forEach { neighbor ->
+                    if (neighbor !in seen && neighbor in graph && graph[neighbor] != '#') {
+                        var newKeys = keys.clone() as BitSet
+                        if (graph[neighbor]!!.isUpperCase()) {
+                            newKeys.set(graph[neighbor]!! - 'A', true)
+                        }
+                        seen.add(neighbor)
+                        newFrontier.add(Pair(neighbor, newKeys))
+
+                        if (neighbor == end) {
+                            return keys
+                        }
+                    }
+                }
+            }
+            frontier = newFrontier
+        }
+    }
+
+    val pairwiseKeyDists = mutableMapOf<Pair<Coord, Coord>, Int>()
+    val pairwiseKeyDeps = mutableMapOf<Pair<Coord, Coord>, BitSet>()
+
+    keyCoords.forEachIndexed { idx, originList ->
+        for (p1 in originList + origins[idx]) {
+            for (p2 in originList) {
+                if (p1 != p2) {
+                    pairwiseKeyDists[Pair(p1, p2)] = dfsDistBetweenKeys(p1, p2)
+                    pairwiseKeyDeps[Pair(p1, p2)] = bfsKeysBetweenKeys(p1, p2)
+                }
+            }
+        }
+    }
+
+    data class State(
+        val coord1: Coord,
+        val coord2: Coord,
+        val coord3: Coord,
+        val coord4: Coord,
+        val keys: BitSet,
+    ) {
+        fun nicePrint(graph: Map<Coord, Char>) {
+            val input = File("inputs/input18b.txt").readLines()
+            val X = input.size
+            val Y = input[0].length
+            for (i in 0 until X) {
+                var row = ""
+                for (j in 0 until Y) {
+                    val coord = Coord(i, j)
+                    val toPrint = graph[Coord(i, j)] ?: '#'
+                    row += if (coord in listOf(coord1, coord2, coord3, coord4)) {
+                        "@"
+                    } else {
+                        toPrint
+                    }
+                }
+                println(row)
+            }
+            println(keys)
+            println("-----------------------------------------------------")
+        }
+    }
+
+    fun BitSet.toCharSet(): Set<Char> {
+        val ret = mutableSetOf<Char>()
+        for (i in 0 until keyAlphabetSize) {
+            if (this.get(i)) {
+                ret.add('a' + i)
+            }
+        }
+        return ret
+    }
+
+    val memo = mutableMapOf<State, Int>()
+    val seen = mutableSetOf<State>()
+
+    fun helper(current: State): Int {
+        // Avoid doing repeat work
+        if (current in memo) {
+            return memo[current]!!
+        }
+
+        // Base case
+        if (current.keys.cardinality() == keyAlphabetSize) {
+//            current.nicePrint(graph)
+            return 0
+        }
+
+        // Prevent looping back on oneself, keep track of positions on the stack but not memoized yet
+        if (current in seen) {
+            return INFINITY
+        }
+        seen.add(current)
+
+        // Recurse
+        val recurse = mutableListOf<Int>()
+
+        for (quadrant in 0..3) {
+            val missingKeys1 = keyVals[quadrant] - current.keys.toCharSet()
+            missingKeys1.forEach {
+                val missingKeyPos = keyToCoord[it]!!
+                val currentPos = when (quadrant) {
+                    0 -> current.coord1
+                    1 -> current.coord2
+                    2 -> current.coord3
+                    3 -> current.coord4
+                    else -> throw Exception("Bad Quadrant")
+                }
+                val requiredDeps = pairwiseKeyDeps[Pair(currentPos, missingKeyPos)]!!
+                val keyCheck = (requiredDeps.clone() as BitSet)
+                keyCheck.and(current.keys)
+                if (keyCheck.cardinality() == requiredDeps.cardinality()) { // If we have all the keys
+                    recurse.add(
+                        pairwiseKeyDists[Pair(
+                            currentPos,
+                            missingKeyPos
+                        )]!! + helper(
+                            when (quadrant) {
+                                0 -> current.copy(
+                                    coord1 = missingKeyPos,
+                                    keys = keysWithMultipleNewKeys(current.keys, listOf(it))
+                                )
+
+                                1 -> current.copy(
+                                    coord2 = missingKeyPos,
+                                    keys = keysWithMultipleNewKeys(current.keys, listOf(it))
+                                )
+
+                                2 -> current.copy(
+                                    coord3 = missingKeyPos,
+                                    keys = keysWithMultipleNewKeys(current.keys, listOf(it))
+                                )
+
+                                3 -> current.copy(
+                                    coord4 = missingKeyPos,
+                                    keys = keysWithMultipleNewKeys(current.keys, listOf(it))
+                                )
+
+                                else -> throw Exception("Bad Quadrant")
+                            }
+                        )
+                    )
+                }
+            }
+        }
+
+        memo[current] = recurse.minOrNull() ?: INFINITY
+        seen.remove(current)
+        return memo[current]!!
+    }
+
+
+    println("pairwiseKeyDists: $pairwiseKeyDists")
+    println("quadrant keyset sizes: ${keyCoords.map { it.size }}")
+    println("pairwiseKeyDeps: $pairwiseKeyDeps")
+
+    val start = State(origins[0], origins[1], origins[2], origins[3], BitSet(keyAlphabetSize))
+    val ret = helper(start)
+    println(ret)
+    return ret
+}
+
+
+fun findKeysetInQuadrant(start: Coord, grid: Map<Coord, Char>): Set<Coord> {
+    val ret = mutableSetOf<Coord>()
+    val stack = mutableListOf(start)
+    val seen = mutableSetOf<Coord>()
+    while (stack.isNotEmpty()) {
+        val current = stack.removeLast()
+        if (current in seen) {
+            continue
+        }
+        seen.add(current)
+        if (grid[current]?.isLowerCase() == true) {
+            ret.add(current)
+        }
+        if (grid[current]?.isLowerCase() == true || grid[current] == '.') {
+            stack.addAll(current.neighbors)
+        }
+    }
+    return ret
+}
+
+
+//--------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------
 data class SplitKeyMazeState(
     val coord1: Coord,
     val coord2: Coord,
@@ -67,12 +316,12 @@ data class SplitKeyMazeState(
         for (i in 0 until X) {
             var row = ""
             for (j in 0 until Y) {
-                val coord = Coord(i,j)
-                val toPrint = graph[Coord(i,j)] ?: '#'
-                if (coord in listOf(coord1, coord2, coord3, coord4)) {
-                    row += "@"
+                val coord = Coord(i, j)
+                val toPrint = graph[Coord(i, j)] ?: '#'
+                row += if (coord in listOf(coord1, coord2, coord3, coord4)) {
+                    "@"
                 } else {
-                    row += toPrint
+                    toPrint
                 }
             }
             println(row)
@@ -82,10 +331,10 @@ data class SplitKeyMazeState(
     }
 }
 
-const val INFINITY = Int.MAX_VALUE - 730 // Arbitrary
+const val INFINITY = Int.MAX_VALUE - 73000 // Arbitrary
 
 fun partBPrunedDFS(): Int {
-    val input = File("inputs/input18btrue.txt").readLines()
+    val input = File("inputs/input18b.txt").readLines()
     val X = input.size
     val Y = input[0].length
 
@@ -123,44 +372,29 @@ fun partBPrunedDFS(): Int {
 
         // Base case
         if (current.keys.cardinality() == keyAlphabetSize) {
-//            println(soFar)
-//            println(currentBest)
-            currentBest = min(currentBest, soFar)
             current.nicePrint(graph)
             return 0
         }
 
-        // Prevent looping back on oneself
+        // Prevent looping back on oneself, keep track of positions on the stack but not memoized yet
         if (current in seen) {
             return INFINITY
         }
         seen.add(current)
 
-        // Prune inefficient branches
-        if (soFar >= currentBest) {
-            return INFINITY
-        }
-
-
         // Recurse
         val recurse = mutableListOf<Int>()
-//        println(soFar)
         current.neighbors(graph).forEach { neighbor ->
             val recursionResult = 1 + dfs(soFar + 1, graph, neighbor)
             recurse.add(recursionResult)
-//            currentBest = min(currentBest, recursionResult)
         }
         memo[current] = recurse.minOrNull() ?: INFINITY
-        if (memo[current]!! == INFINITY) {
-            seen.remove(current)
-        }
-//        currentBest = min(currentBest, memo[current]!!)
+        seen.remove(current)
         return memo[current]!!
     }
 
     val ret = dfs(0, graph, start)
     println(ret)
-    println(currentBest)
     return ret
 }
 
@@ -310,7 +544,5 @@ data class KeyMazeState(
 }
 
 fun main() {
-//    println(measureTime { partA() })
-//    println(measureTime { partBBruteForce() })
-    println(measureTime { partBPrunedDFS() })
+    println(measureTime { partBPrecalculated() })
 }
