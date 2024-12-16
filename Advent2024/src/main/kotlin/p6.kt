@@ -1,3 +1,4 @@
+import Utils.Direction
 import java.io.File
 
 val INPUT = File("inputs/input6.txt").readLines()
@@ -123,8 +124,4 @@ data class Guard(
             Direction.LEFT -> copy(dir = Direction.UP)
         }
     }
-}
-
-enum class Direction {
-    UP, DOWN, LEFT, RIGHT
 }

@@ -35,6 +35,10 @@ object Utils {
         }
     }
 
+    enum class Direction {
+        UP, DOWN, LEFT, RIGHT
+    }
+
     fun <T> readAsGrid(inputFilename: String, range: IntRange?, transform: (Char) -> T): MutableMap<Coord, T> {
         val grid = mutableMapOf<Coord, T>()
         var input = File(inputFilename).readLines()

@@ -1,4 +1,5 @@
 import Utils.Coord
+import Utils.Direction
 import java.io.File
 
 val INPUT_12 = File("inputs/input12.txt").readLines()
