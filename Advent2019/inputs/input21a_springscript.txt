@@ -9,3 +9,4 @@ NOT T T
 NOT D J
 NOT J J
 AND T J
+WALK

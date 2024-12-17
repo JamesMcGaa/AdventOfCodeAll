@@ -1,0 +1,100 @@
+y = x OR y
+y = x AND y
+y = NOT x
+
+
+// FOR CLEARING
+J = NOT T
+T = T AND J #Set T to false
+J = NOT T # Set J to true
+J = NOT J # Set J to false too
+
+NOT T J
+AND J T
+NOT T J
+NOT J J
+
+// T is true if there are no holes
+T = A OR T
+T = B AND T
+T = C AND T
+
+OR A T
+AND B T
+AND C T
+
+// T signifies if there is a hole in first 3
+T = NOT T
+
+NOT T T
+
+// J is true if we have a hole at D
+J = NOT D
+J = NOT J
+J = T AND J
+
+NOT D J
+NOT J J
+AND T J
+
+// Part A Final Answer
+NOT T J
+AND J T
+NOT T J
+NOT J J
+OR A T
+AND B T
+AND C T
+NOT T T
+NOT D J
+NOT J J
+AND T J
+
+
+J = E OR J
+J = H OR J
+J = NOT J
+
+OR E J
+OR H J
+NOT J J
+
+
+
+Set both to false
+NOT T J
+AND J T
+AND T J
+
+T = true if there a hole in first 3
+OR A T
+AND B T
+AND C T // At this point T is false if theres a hole
+NOT T T
+
+J = true if theres solid ground in at least 1 of E or H
+OR E J
+OR H J
+
+Merge the results into J
+AND T J
+
+Make sure theres room at D
+NOT D T
+NOT T T
+AND T J
+
+
+NOT T J
+AND J T
+AND T J
+OR A T
+AND B T
+AND C T
+NOT T T
+OR E J
+OR H J
+AND T J
+NOT D T
+NOT T T
+AND T J
