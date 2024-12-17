@@ -58,7 +58,7 @@ object Utils {
         for (i in minX..maxX) {
             var row = ""
             for (j in minY..maxY) {
-                row += grid[Coord(i, j)]
+                row += grid[Coord(i, j)] ?: ""
             }
             println(row)
         }
