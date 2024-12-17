@@ -176,6 +176,8 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
 
     abstract fun getInput(): Long
 
+    open fun resetHook() = Unit
+
     open fun outputHook() = Unit
 
     @Suppress("unused")
@@ -185,6 +187,7 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
         relativeBase = 0L
         isHalted = false
         lastOutput = 0L
+        resetHook()
     }
 
 
