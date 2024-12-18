@@ -7,39 +7,42 @@ data class PlutoCoord(
     fun getPlutoNeighbors(): Set<PlutoCoord> {
         val ret = mutableSetOf<PlutoCoord>()
 
+        when (coord) { // Handle adj to center
+            Coord(1, 2) -> {
+                ret.add(PlutoCoord(depth + 1, Coord(0, 0)))
+                ret.add(PlutoCoord(depth + 1, Coord(0, 1)))
+                ret.add(PlutoCoord(depth + 1, Coord(0, 2)))
+                ret.add(PlutoCoord(depth + 1, Coord(0, 3)))
+                ret.add(PlutoCoord(depth + 1, Coord(0, 4)))
+            }
+            Coord(2, 3) -> {
+                ret.add(PlutoCoord(depth + 1, Coord(0, 4)))
+                ret.add(PlutoCoord(depth + 1, Coord(1, 4)))
+                ret.add(PlutoCoord(depth + 1, Coord(2, 4)))
+                ret.add(PlutoCoord(depth + 1, Coord(3, 4)))
+                ret.add(PlutoCoord(depth + 1, Coord(4, 4)))
+            }
+            Coord(3, 2) -> {
+                ret.add(PlutoCoord(depth + 1, Coord(4, 0)))
+                ret.add(PlutoCoord(depth + 1, Coord(4, 1)))
+                ret.add(PlutoCoord(depth + 1, Coord(4, 2)))
+                ret.add(PlutoCoord(depth + 1, Coord(4, 3)))
+                ret.add(PlutoCoord(depth + 1, Coord(4, 4)))
+            }
+            Coord(2, 1) -> {
+                ret.add(PlutoCoord(depth + 1, Coord(0, 0)))
+                ret.add(PlutoCoord(depth + 1, Coord(1, 0)))
+                ret.add(PlutoCoord(depth + 1, Coord(2, 0)))
+                ret.add(PlutoCoord(depth + 1, Coord(3, 0)))
+                ret.add(PlutoCoord(depth + 1, Coord(4, 0)))
+            }
+        }
+
         coord.manhattanNeighbors.forEach { neighborCoord ->
             when {
-                neighborCoord == Coord(1, 2) -> {
-                    ret.add(PlutoCoord(depth + 1, Coord(0,0)))
-                    ret.add(PlutoCoord(depth + 1, Coord(0,1)))
-                    ret.add(PlutoCoord(depth + 1, Coord(0,2)))
-                    ret.add(PlutoCoord(depth + 1, Coord(0,3)))
-                    ret.add(PlutoCoord(depth + 1, Coord(0,4)))
-                }
-                neighborCoord == Coord(2, 3) -> {
-                    ret.add(PlutoCoord(depth + 1, Coord(0,4)))
-                    ret.add(PlutoCoord(depth + 1, Coord(1,4)))
-                    ret.add(PlutoCoord(depth + 1, Coord(2,4)))
-                    ret.add(PlutoCoord(depth + 1, Coord(3,4)))
-                    ret.add(PlutoCoord(depth + 1, Coord(4,4)))
-                }
-                neighborCoord == Coord(3, 2) -> {
-                    ret.add(PlutoCoord(depth + 1, Coord(4,0)))
-                    ret.add(PlutoCoord(depth + 1, Coord(4,1)))
-                    ret.add(PlutoCoord(depth + 1, Coord(4,2)))
-                    ret.add(PlutoCoord(depth + 1, Coord(4,3)))
-                    ret.add(PlutoCoord(depth + 1, Coord(4,4)))
-                }
-                neighborCoord == Coord(2, 1) -> {
-                    ret.add(PlutoCoord(depth + 1, Coord(0,0)))
-                    ret.add(PlutoCoord(depth + 1, Coord(1,0)))
-                    ret.add(PlutoCoord(depth + 1, Coord(2,0)))
-                    ret.add(PlutoCoord(depth + 1, Coord(3,0)))
-                    ret.add(PlutoCoord(depth + 1, Coord(4,0)))
-                }
+                neighborCoord == Coord(2,2) -> Unit // Handled above
 
-                neighborCoord == Coord(2,2) -> Unit
-
+                // Handle adj to outside
                 neighborCoord.x == -1 -> {
                     ret.add(PlutoCoord(depth - 1, Coord(1, 2)))
                 }
@@ -56,7 +59,7 @@ data class PlutoCoord(
                     ret.add(PlutoCoord(depth - 1, Coord(2, 3)))
                 }
 
-                else -> {
+                else -> { // Handle intra-depth adj as normal
                     ret.add(PlutoCoord(depth, neighborCoord))
                 }
             }
@@ -66,26 +69,21 @@ data class PlutoCoord(
 }
 
 fun main() {
-    var grid = Utils.readAsGrid("inputs/input24.txt", null, { it })
+    var grid = Utils.readAsGrid("inputs/input24.txt", null) { it }
     var plutoGrid = grid.filterValues { it == '#' }.keys.map { PlutoCoord(0, it) }.groupingBy { it }.eachCount()
     Utils.printGrid(grid)
 
-//    val biodiversitySet = mutableSetOf<Int>()
-//    while (biodiversityRating(grid) !in biodiversitySet) {
-//        biodiversitySet.add(biodiversityRating(grid))
-//        grid = iterateBugs(grid)
-//    }
-//    println(biodiversityRating(grid))
+    val biodiversitySet = mutableSetOf<Int>()
+    while (biodiversityRating(grid) !in biodiversitySet) {
+        biodiversitySet.add(biodiversityRating(grid))
+        grid = iterateBugs(grid)
+    }
+    println("Part A: ${biodiversityRating(grid)}")
 
-    println(plutoGrid.size)
-    repeat(10) {
+    repeat(200) {
         plutoGrid = iteratePlutoBugs(plutoGrid)
     }
-    println(plutoGrid.size)
-    println(plutoGrid.keys.sortedBy { it.depth })
-    for (depth in -5..5) {
-        println(plutoGrid.filterKeys { it.depth == depth }.keys.map { it.coord }.size)
-    }
+    println("Part B: ${plutoGrid.size}")
 }
 
 fun iteratePlutoBugs(plutoGrid: Map<PlutoCoord, Int>): Map<PlutoCoord, Int> {
