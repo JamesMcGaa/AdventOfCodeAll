@@ -180,6 +180,8 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
 
     open fun outputHook() = Unit
 
+    open fun preExecuteHook(): Boolean = true
+
     @Suppress("unused")
     open fun reset() {
         executionPointer = 0
@@ -193,6 +195,9 @@ abstract class IntcodeP15Base(var instructions: MutableMap<Long, Long>) {
 
     fun executeIntcode(shouldPrintOutputs: Boolean = false, returnOnOutput: Boolean = false): Long {
         while (true) {
+            if (!preExecuteHook()) {
+                return Long.MAX_VALUE
+            }
             val ins = instructions[executionPointer]!!
             assert(ins > 0L)
             val opcode = ins % 100L
