@@ -1,6 +1,7 @@
 @file:Suppress("unused")
 
 import java.io.File
+import java.math.BigInteger
 import kotlin.math.absoluteValue
 
 const val N = 10007
@@ -187,12 +188,12 @@ fun simpleA() {
     val shuffles = File("inputs/input22.txt").readLines().map {
         if (it.contains("cut")) {
             val amount = it.filter { it.isDigit() || it == '-' }.toInt()
-            Shuffle(0, amount)
+            Shuffle(0, amount, it)
         } else if (it.contains("increment")) {
             val amount = it.filter { it.isDigit() || it == '-' }.toInt()
-            Shuffle(1, amount)
+            Shuffle(1, amount, it)
         } else {
-            Shuffle(2, null)
+            Shuffle(2, null, it)
         }
     }
 
@@ -212,19 +213,20 @@ fun simpleA() {
 
 data class Shuffle(
     val type: Int,
-    val amount: Int?
+    val amount: Int?,
+    val line: String,
 )
 
 fun partBCycleAttempt() {
     val shuffles = File("inputs/input22.txt").readLines().map {
         if (it.contains("cut")) {
             val amount = it.filter { it.isDigit() || it == '-' }.toInt()
-            Shuffle(0, amount)
+            Shuffle(0, amount, it)
         } else if (it.contains("increment")) {
             val amount = it.filter { it.isDigit() || it == '-' }.toInt()
-            Shuffle(1, amount)
+            Shuffle(1, amount, it)
         } else {
-            Shuffle(2, null)
+            Shuffle(2, null, it)
         }
     }
 
@@ -256,9 +258,9 @@ fun partBCycleAttempt() {
 
 // Credits: Google Bard
 fun modInverse(a: Long, m: Long, fermats: Boolean = false): Long {
-//    if (fermats) {
-//        return modularPow(a, m-2, m)
-//    }
+    if (fermats) {
+        return modularPow(a, m-2, m)
+    }
     // Credits: Google Bard
     var x = 1L
     var y = 0L
@@ -281,12 +283,14 @@ fun modInverse(a: Long, m: Long, fermats: Boolean = false): Long {
         x += m
     }
 
+//    println("$($a, ${m-2}, $m): $x")
     return x
 }
 
 // Credits: https://en.wikipedia.org/wiki/Modular_exponentiation#Pseudocode
 fun modularPow(b: Long, e: Long, modulus: Long): Long {
     if (modulus == 1L) {
+        println("wei")
         return 0L
     }
     var result = 1L
@@ -295,10 +299,12 @@ fun modularPow(b: Long, e: Long, modulus: Long): Long {
     while (exponent > 0L) {
         if (exponent % 2L == 1L) {
             result = (result * base) % modulus
+//            println(result)
         }
         exponent = exponent shr 1
         base = (base * base) % modulus
     }
+//    println("$($b, $e, $modulus): $result")
     return result
 }
 
@@ -306,29 +312,39 @@ fun main() {
     val shuffles = File("inputs/input22.txt").readLines().map {
         if (it.contains("cut")) {
             val amount = it.filter { it.isDigit() || it == '-' }.toInt()
-            Shuffle(0, amount)
+            Shuffle(0, amount, it)
         } else if (it.contains("increment")) {
             val amount = it.filter { it.isDigit() || it == '-' }.toInt()
-            Shuffle(1, amount)
+            Shuffle(1, amount, it)
         } else {
-            Shuffle(2, null)
+            Shuffle(2, null, it)
         }
     }
 
+    // Credits https://www.reddit.com/r/adventofcode/comments/ee0rqi/comment/fbnkaju/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
     var incrementMultiplier = 1L
     var offset = 0L
     val deckSize = 119315717514047L
     val numShuffles = 101741582076661L
 
     shuffles.forEach {
+        println("$incrementMultiplier, $offset")
+        println(it.line)
         if (it.type == 0) {
             offset += incrementMultiplier * it.amount!!
             offset %= deckSize
         } else if (it.type == 1) {
-            println("${it.amount}, $deckSize")
-            println( modInverse(it.amount!!.toLong(), deckSize, fermats = true))
-            incrementMultiplier *= modInverse(it.amount!!.toLong(), deckSize, fermats = true)
-            incrementMultiplier %= deckSize
+            println("modinv")
+            println(modInverse(it.amount!!.toLong(), deckSize, false))
+            val new = BigInteger(incrementMultiplier.toString()) * BigInteger(
+                modInverse(
+                    it.amount!!.toLong(),
+                    deckSize,
+                    false
+                ).toString()
+            )
+            val ret = new % BigInteger(deckSize.toString())
+            incrementMultiplier = ret.toLong()
         } else {
             incrementMultiplier *= -1
             incrementMultiplier %= deckSize
@@ -336,17 +352,22 @@ fun main() {
             offset %= deckSize
         }
     }
+    if (incrementMultiplier < 0) {
+        incrementMultiplier += deckSize
+    }
+    if (offset < 0) {
+        offset += deckSize
+    }
+    println("final")
     println("$incrementMultiplier, $offset")
 
-    //    val finalIncrement = modularPow(incrementMultiplier, numShuffles, deckSize)
-    val finalIncrement = 17276846808554 // to avoid overflow
-    // Inv is 84688791951933
-    //    val finalOffset = (offset * finalIncrement * modInverse((1-incrementMultiplier) % deckSize, deckSize)) % deckSize
-    val finalOffset = 96196507702896 // to avoid overflow
+    //incrementMultiplier = 50861413717150,
+    // offset = 46829725060782
+//    val finalIncrement = modularPow(incrementMultiplier, numShuffles, deckSize)
+    val finalIncrement = 113356032258830 // to avoid overflow
+    //    val finalOffset = (offset * (1 - finalIncrement) * modInverse((1-incrementMultiplier) % deckSize, deckSize)) % deckSize
+    var finalOffset = 117299609056615
     println("$finalIncrement, $finalOffset")
-
     println("${((finalOffset + 2020 * finalIncrement) % deckSize)}")
-
-    // 119315717514047
-    // 99288985546662 too high
 }
+
