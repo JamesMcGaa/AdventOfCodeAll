@@ -1,7 +1,9 @@
+@file:Suppress("unused")
+
 import java.io.File
 import kotlin.math.absoluteValue
 
-val N = 10
+const val N = 10007
 
 class Deck() {
     var head: LinkedListNode = LinkedListNode(0, this)
@@ -39,10 +41,10 @@ class Deck() {
 
     fun cut(amount: Int) {
         repeat(amount.absoluteValue) {
-            if (direction * amount >= 0) {
-                head = head.next
+            head = if (direction * amount >= 0) {
+                head.next
             } else {
-                head = head.prev
+                head.prev
             }
         }
     }
@@ -74,25 +76,26 @@ class Deck() {
         return ret
     }
 
-//    fun dealIncrement(amount: Int) {
-//        var newHead = head
-//        var oldHead = head.splice()
-//        var tail = head
-//        while (oldHead.next != oldHead) {
-//            repeat(amount - 1) {
-//                oldHead = oldHead.next
-//            }
-//
-//            val spliced = oldHead
-//            oldHead = oldHead.splice()
-//
-//            spliced.prev = tail
-//            tail.next = spliced
-//            tail = spliced
-//        }
-//        tail.next = head
-//        head.prev = tail
-//    }
+    fun dealIncrementLL(amount: Int) {
+        var newHead = head
+        var oldHead = head.splice()
+        var tail = head
+        while (oldHead.next != oldHead) {
+            repeat(amount - 1) {
+                oldHead = oldHead.next
+            }
+
+            val spliced = oldHead
+            oldHead = oldHead.splice()
+
+            spliced.prev = tail
+            tail.next = spliced
+            tail = spliced
+        }
+        tail.next = head
+        head.prev = tail
+        head = newHead
+    }
 }
 
 data class LinkedListNode(
@@ -132,13 +135,13 @@ data class LinkedListNode(
     }
 }
 
-fun main() {
+fun p22aLinkedList() {
     val deck = Deck()
     File("inputs/input22.txt").forEachLine {
         println(deck.toList())
         println(it)
         if (it.contains("cut")) {
-            val amount = it.filter { it.isDigit() }.toInt()
+            val amount = it.filter { it.isDigit() || it == '-' }.toInt()
             deck.cut(amount)
         } else if (it.contains("increment")) {
             val amount = it.filter { it.isDigit() }.toInt()
@@ -148,5 +151,202 @@ fun main() {
         }
     }
     println("final")
-    println(deck.toList())
+    println(deck.toList().indexOf(2019))
+}
+
+fun p22aRegularList() {
+    var computer = (0 until N).toList()
+    File("inputs/input22.txt").forEachLine {
+        if (it.contains("cut")) {
+            val amount = it.filter { it.isDigit() || it == '-' }.toInt()
+            computer = if (amount > 0) {
+                computer.subList(amount, computer.size) + computer.subList(0, amount)
+            } else {
+                computer.subList(computer.size - amount.absoluteValue, computer.size) + computer.subList(0, computer.size - amount.absoluteValue)
+            }
+        } else if (it.contains("increment")) {
+            val amount = it.filter { it.isDigit() }.toInt()
+            val newComputer = mutableListOf<Int>()
+            repeat(N) {
+                newComputer.add(-730)
+            }
+            var currentPtr = 0
+            computer.forEach {
+                newComputer[currentPtr] = it
+                currentPtr = (currentPtr + amount) % N
+            }
+            computer = newComputer
+        } else {
+            computer = computer.reversed().toMutableList()
+        }
+    }
+    println(computer.indexOf(2019))
+}
+
+fun simpleA() {
+    val shuffles = File("inputs/input22.txt").readLines().map {
+        if (it.contains("cut")) {
+            val amount = it.filter { it.isDigit() || it == '-' }.toInt()
+            Shuffle(0, amount)
+        } else if (it.contains("increment")) {
+            val amount = it.filter { it.isDigit() || it == '-' }.toInt()
+            Shuffle(1, amount)
+        } else {
+            Shuffle(2, null)
+        }
+    }
+
+    val deckSize = 10007L
+    var currentIdx = 2019L
+    shuffles.forEach {
+        if (it.type == 0) {
+            currentIdx = (currentIdx - it.amount!!) % deckSize
+        } else if (it.type == 1) {
+            currentIdx = (it.amount!! * currentIdx) % deckSize
+        } else {
+            currentIdx = (deckSize - 1) - currentIdx
+        }
+    }
+    println(currentIdx)
+}
+
+data class Shuffle(
+    val type: Int,
+    val amount: Int?
+)
+
+fun partBCycleAttempt() {
+    val shuffles = File("inputs/input22.txt").readLines().map {
+        if (it.contains("cut")) {
+            val amount = it.filter { it.isDigit() || it == '-' }.toInt()
+            Shuffle(0, amount)
+        } else if (it.contains("increment")) {
+            val amount = it.filter { it.isDigit() || it == '-' }.toInt()
+            Shuffle(1, amount)
+        } else {
+            Shuffle(2, null)
+        }
+    }
+
+    val deckSize = 119315717514047L
+    val idxToIteration = mutableMapOf(2020L to 0L)
+    var currentIteration = 0L
+    var currentIdx = 2020L
+    while (true) {
+        if (currentIteration % 1000000L == 0L) {
+            println(idxToIteration.size)
+        }
+        shuffles.forEach {
+            if (it.type == 0) {
+                currentIdx = (currentIdx - it.amount!!) % deckSize
+            } else if (it.type == 1) {
+                currentIdx = (it.amount!! * currentIdx) % deckSize
+            } else {
+                currentIdx = (deckSize - 1) - currentIdx
+            }
+        }
+        if (currentIdx in idxToIteration) {
+            println("$currentIdx, ${idxToIteration[currentIdx]}")
+            return
+        }
+        idxToIteration[currentIdx] = ++currentIteration
+    }
+}
+
+
+// Credits: Google Bard
+fun modInverse(a: Long, m: Long, fermats: Boolean = false): Long {
+//    if (fermats) {
+//        return modularPow(a, m-2, m)
+//    }
+    // Credits: Google Bard
+    var x = 1L
+    var y = 0L
+    var m0 = m
+    var a0 = a
+
+    while (a0 > 1L) {
+        val q = a0 / m0
+        var t = m0
+
+        m0 = a0 % m0
+        a0 = t
+        t = y
+
+        y = x - q * y
+        x = t
+    }
+
+    if (x < 0L) {
+        x += m
+    }
+
+    return x
+}
+
+// Credits: https://en.wikipedia.org/wiki/Modular_exponentiation#Pseudocode
+fun modularPow(b: Long, e: Long, modulus: Long): Long {
+    if (modulus == 1L) {
+        return 0L
+    }
+    var result = 1L
+    var base = b % modulus
+    var exponent = e
+    while (exponent > 0L) {
+        if (exponent % 2L == 1L) {
+            result = (result * base) % modulus
+        }
+        exponent = exponent shr 1
+        base = (base * base) % modulus
+    }
+    return result
+}
+
+fun main() {
+    val shuffles = File("inputs/input22.txt").readLines().map {
+        if (it.contains("cut")) {
+            val amount = it.filter { it.isDigit() || it == '-' }.toInt()
+            Shuffle(0, amount)
+        } else if (it.contains("increment")) {
+            val amount = it.filter { it.isDigit() || it == '-' }.toInt()
+            Shuffle(1, amount)
+        } else {
+            Shuffle(2, null)
+        }
+    }
+
+    var incrementMultiplier = 1L
+    var offset = 0L
+    val deckSize = 119315717514047L
+    val numShuffles = 101741582076661L
+
+    shuffles.forEach {
+        if (it.type == 0) {
+            offset += incrementMultiplier * it.amount!!
+            offset %= deckSize
+        } else if (it.type == 1) {
+            println("${it.amount}, $deckSize")
+            println( modInverse(it.amount!!.toLong(), deckSize, fermats = true))
+            incrementMultiplier *= modInverse(it.amount!!.toLong(), deckSize, fermats = true)
+            incrementMultiplier %= deckSize
+        } else {
+            incrementMultiplier *= -1
+            incrementMultiplier %= deckSize
+            offset += incrementMultiplier
+            offset %= deckSize
+        }
+    }
+    println("$incrementMultiplier, $offset")
+
+    //    val finalIncrement = modularPow(incrementMultiplier, numShuffles, deckSize)
+    val finalIncrement = 17276846808554 // to avoid overflow
+    // Inv is 84688791951933
+    //    val finalOffset = (offset * finalIncrement * modInverse((1-incrementMultiplier) % deckSize, deckSize)) % deckSize
+    val finalOffset = 96196507702896 // to avoid overflow
+    println("$finalIncrement, $finalOffset")
+
+    println("${((finalOffset + 2020 * finalIncrement) % deckSize)}")
+
+    // 119315717514047
+    // 99288985546662 too high
 }
