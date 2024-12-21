@@ -80,4 +80,91 @@ object Utils {
     fun  <T : Any> findFirstIdx(target: T, grid: MutableMap<Coord, T>): Coord {
         return grid.keys.first { grid[it] == target }
     }
+
+    data class CircularLinkedListNode<T>(
+        val value: T,
+    ) {
+        private var _next: CircularLinkedListNode<T>? = null
+        private var _prev: CircularLinkedListNode<T>? = null
+
+        companion object {
+            fun <T> initFromList(inp: List<T>): CircularLinkedListNode<T> {
+                val newHead = CircularLinkedListNode(inp.first())
+                var prev = newHead
+                for (i in inp.subList(1, inp.size)) {
+                    val new = CircularLinkedListNode(i)
+                    prev.next = new
+                    new.prev = prev
+                    prev = new
+                }
+                prev.next = newHead
+                newHead.prev = prev
+                return newHead
+            }
+        }
+
+        fun toList(): List<T> {
+            val ret = mutableListOf<T>()
+            ret.add(this.value)
+            var current = this.next
+            while (current != this) {
+                ret.add(current.value)
+                current = current.next
+            }
+            return ret
+        }
+
+        fun find(target: T): CircularLinkedListNode<T> {
+            if (this.value == target) {
+                return this
+            }
+            var current = this.next
+            while(current != this) {
+                if (current.value == target) {
+                    return current
+                }
+                current = current.next
+            }
+            throw Exception ("Value not found in CLL")
+        }
+
+        var next: CircularLinkedListNode<T>
+            get() = _next!!
+            set(value) {
+                _next = value
+            }
+
+        var prev: CircularLinkedListNode<T>
+            get() =  _prev!!
+            set(value) {
+                _prev = value
+            }
+
+        /**
+         * Removes the current node from the CLL
+         * Returns a pair of (the spliced node, the next node in the old list)
+         */
+        fun splice(): Pair<CircularLinkedListNode<T>, CircularLinkedListNode<T>> {
+            prev.next = next
+            next.prev = prev
+            val replacementCCW = next
+            this._next = null
+            this._prev = null
+            return Pair(this, replacementCCW)
+        }
+
+        /**
+         * Inserts the new node CW of the current node
+         * Returns the new node
+         */
+        fun insert(new: CircularLinkedListNode<T>): CircularLinkedListNode<T> {
+            val oldNext = next
+            new.next = oldNext
+            new.prev = this
+            this.next = new
+            oldNext.prev = new
+            return new
+        }
+    }
+
 }
