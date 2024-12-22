@@ -1,3 +1,5 @@
+import Utils.Coord
+
 const val INPUT = "stpzcrnm"
 
 fun main() {

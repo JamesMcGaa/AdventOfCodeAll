@@ -1,3 +1,4 @@
+import Utils.Coord
 import kotlin.math.abs
 
 fun main() {
@@ -70,8 +71,3 @@ fun runP3B(input: Int) {
 enum class Direction(val innerVal: Int) {
     DOWN(0), RIGHT(1), UP(2), LEFT(3),
 }
-
-data class Coord(
-    val x: Int,
-    val y: Int
-)
