@@ -187,4 +187,22 @@ object Utils {
         }
     }
 
+    fun rotateClockwise(grid: Map<Coord, Char>): Map<Coord, Char> {
+        var newGrid = mutableMapOf<Coord, Char>()
+        grid.forEach { coord, ch ->
+            newGrid[Coord(coord.y, -coord.x)] = ch
+        }
+        val minX = newGrid.keys.minOf { it.x }
+        val minY = newGrid.keys.minOf { it.y }
+        return newGrid.mapKeys { (coord, _) -> Coord(coord.x - minX, coord.y - minY) }
+    }
+
+    fun flip(grid: Map<Coord, Char>): Map<Coord, Char> {
+        var newGrid = mutableMapOf<Coord, Char>()
+        val maxY = grid.keys.maxOf { it.y }
+        grid.forEach { coord, ch ->
+            newGrid[Coord(coord.x, maxY - coord.y)] = ch
+        }
+        return newGrid
+    }
 }
