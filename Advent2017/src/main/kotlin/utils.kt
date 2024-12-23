@@ -15,6 +15,8 @@ object Utils {
         var x: Int,
         var y: Int,
     ) {
+        val manhattanDist = x + y
+
         val fullNeighbors: Set<Coord>
             get() = manhattanNeighbors + diagonalNeighbors
 

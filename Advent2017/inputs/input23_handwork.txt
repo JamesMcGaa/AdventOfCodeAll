@@ -1,0 +1,30 @@
+a = 1
+b = 108100
+c = 125100
+f = 1 --- start
+d = 2
+e = 2 ------ 2
+
+
+if d * e - b isnt 0 ------ 1, 3
+f = 0
+e += 1 ------- 3
+if e - b isnt zero ------ 1
+
+Essentially we increment e up to b
+f is eventually zeroed when d * e = b which only occurs
+when b is a multiple of d
+
+
+d += 1
+if d - b isnt zero ------2
+
+increment d up to b
+
+
+if f isnt zero -----4
+h -= 1
+if b - c isnt zero ----- 4, 5
+programs done
+b -= 17 ----- 5
+always go back to start --- start
