@@ -1,4 +1,4 @@
-import Utils.Coord
+import main.kotlin.Utils.Coord
 import java.io.File
 
 val INPUT_8 = File("inputs/input8.txt").readLines()

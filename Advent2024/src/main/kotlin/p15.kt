@@ -1,4 +1,5 @@
-import Utils.Coord
+import main.kotlin.Utils
+import main.kotlin.Utils.Coord
 import java.io.File
 import kotlin.collections.flatten
 
@@ -19,7 +20,7 @@ fun part15B() {
             grid[Coord(i, j)] = ch
         }
     }
-    var current = Utils.findFirstIdx('@', grid)
+    var current = Utils.findCoord('@', grid)
 
     Utils.printGrid(grid)
 
@@ -103,7 +104,7 @@ fun part15B() {
 
             grid = newGrid
 
-            return Utils.findFirstIdx('@', grid)
+            return Utils.findCoord('@', grid)
         } else {
             return current
         }
@@ -124,7 +125,7 @@ fun part15A() {
 
     val grid = Utils.readAsGrid("inputs/input15.txt", 0 until breakIdx) { ch -> ch }
     val parsed = input.subList(breakIdx + 1, input.indices.last + 1).map { it.toCharArray().toList() }.flatten()
-    var current = Utils.findFirstIdx('@', grid)
+    var current = Utils.findCoord('@', grid)
 
     fun push(dir: Char, spot: Coord): Coord? {
         if (grid[spot] == '.') { // Noop

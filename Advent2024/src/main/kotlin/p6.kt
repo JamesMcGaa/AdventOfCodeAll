@@ -1,4 +1,4 @@
-import Utils.Direction
+import main.kotlin.Utils.Direction
 import java.io.File
 
 val INPUT = File("inputs/input6.txt").readLines()

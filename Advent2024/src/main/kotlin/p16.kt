@@ -1,5 +1,6 @@
-import Utils.Coord
-import Utils.Direction
+import main.kotlin.Utils
+import main.kotlin.Utils.Coord
+import main.kotlin.Utils.Direction
 
 data class DirectionCoord(
     val coord: Coord,
@@ -44,8 +45,8 @@ data class DirectionCoord(
 fun main() {
     val grid = Utils.readAsGrid("inputs/input16.txt", null) { it }
     val nodes = grid.filterValues { it != '#' }.keys
-    val start = Utils.findFirstIdx('S', grid)
-    val end = Utils.findFirstIdx('E', grid)
+    val start = Utils.findCoord('S', grid)
+    val end = Utils.findCoord('E', grid)
     Utils.printGrid(grid)
     val infinity = Int.MAX_VALUE
 
