@@ -1,8 +1,5 @@
+import Utils.freqCount
 import java.io.File
-
-fun <T> Iterable<T>.freqCount(): Map<T, Int> {
-    return this.groupingBy { it }.eachCount()
-}
 
 fun main() {
     val input = File("inputs/input2.txt").readLines()
