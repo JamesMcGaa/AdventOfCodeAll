@@ -70,7 +70,12 @@ object Utils {
         }
     }
 
-    fun <T> readAsGrid(inputFilename: String, range: IntRange?, transform: (Char) -> T): MutableMap<Coord, T> {
+    @Suppress("UNCHECKED_CAST")
+    fun <T> readAsGrid(
+        inputFilename: String,
+        range: IntRange? = null,
+        transform: (Char) -> T = { c: Char -> c as T }
+    ): MutableMap<Coord, T> {
         val grid = mutableMapOf<Coord, T>()
         var input = File(inputFilename).readLines()
         if (range != null) {
