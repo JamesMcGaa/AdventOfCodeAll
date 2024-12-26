@@ -44,7 +44,6 @@ fun main() {
         }
         when (it.second[0]) {
             "Guard" -> {
-//                println(currentTime)
                 currentGuard = it.second[1]
                 sleeping = false
             }
