@@ -113,8 +113,8 @@ object Utils {
     data class CircularLinkedListNode<T>(
         val value: T,
     ) {
-        private var _next: CircularLinkedListNode<T>? = null
-        private var _prev: CircularLinkedListNode<T>? = null
+        private var _next: CircularLinkedListNode<T>? = this
+        private var _prev: CircularLinkedListNode<T>? = this
 
         companion object {
             fun <T> initFromList(inp: List<T>): CircularLinkedListNode<T> {
