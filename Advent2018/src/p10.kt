@@ -24,6 +24,8 @@ fun main() {
 
         val starPos = stars.map { it.pos }.toSet()
         val allAdj = stars.all { star ->
+            // Heuristic - all should be adjacent. Started with manhattan neighbors then moved here
+            // After no match
             (star.pos.fullNeighbors intersect starPos).isNotEmpty()
         }
         if (allAdj) {
