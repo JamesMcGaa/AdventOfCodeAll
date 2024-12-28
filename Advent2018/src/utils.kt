@@ -47,6 +47,15 @@ object Utils {
         operator fun minus(other: Coord): Coord {
             return Coord(x - other.x, y - other.y)
         }
+
+        fun moveDir(dir: Direction): Coord {
+            return when (dir) {
+                Direction.UP -> this.copy(x = this.x - 1)
+                Direction.RIGHT -> this.copy(y = this.y + 1)
+                Direction.DOWN -> this.copy(x = this.x + 1)
+                Direction.LEFT -> this.copy(y = this.y - 1)
+            }
+        }
     }
 
     enum class Direction {
