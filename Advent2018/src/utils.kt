@@ -19,6 +19,23 @@ object Utils {
         var x: Int,
         var y: Int,
     ) {
+        val up
+            get() = Coord(x = x - 1, y = y)
+        val down
+            get() = Coord(x = x + 1, y = y)
+        val left
+            get() = Coord(x = x, y = y - 1)
+        val right
+            get() = Coord(x = x, y = y + 1)
+        val downRight
+            get() = Coord(x = x + 1, y = y + 1)
+        val upLeft
+            get() = Coord(x = x - 1, y = y - 1)
+        val downLeft
+            get() = Coord(x = x + 1, y = y - 1)
+        val upRight
+            get() = Coord(x = x - 1, y = y + 1)
+
         val manhattanDist = x.absoluteValue + y.absoluteValue
 
         val fullNeighbors: Set<Coord>
@@ -26,19 +43,12 @@ object Utils {
 
         val diagonalNeighbors: Set<Coord>
             get() = setOf(
-                Coord(x = x + 1, y = y + 1), // DOWN-RIGHT
-                Coord(x = x - 1, y = y - 1), // UP-LEFT
-                Coord(x = x + 1, y = y - 1), // DOWN-LEFT
-                Coord(x = x - 1, y = y + 1), // DOWN-RIGHT
+                downRight, upLeft, downLeft, upRight
             )
 
         val manhattanNeighbors: Set<Coord>
-            get() = setOf(
-                Coord(x = x - 1, y = y), // UP
-                Coord(x = x + 1, y = y), // DOWN
-                Coord(x = x, y = y - 1), // LEFT
-                Coord(x = x, y = y + 1), // RIGHT
-            )
+            get() = setOf(up, down, left, right)
+
 
         operator fun plus(other: Coord): Coord {
             return Coord(x + other.x, y + other.y)
@@ -82,9 +92,7 @@ object Utils {
 
     @Suppress("UNCHECKED_CAST")
     fun <T> readAsGrid(
-        inputFilename: String,
-        range: IntRange? = null,
-        transform: (Char) -> T = { c: Char -> c as T }
+        inputFilename: String, range: IntRange? = null, transform: (Char) -> T = { c: Char -> c as T }
     ): MutableMap<Coord, T> {
         val grid = mutableMapOf<Coord, T>()
         var input = File(inputFilename).readLines()
@@ -99,20 +107,28 @@ object Utils {
         return grid
     }
 
-    fun <T : Any> printGrid(grid: Map<Coord, T>) {
+    fun <T : Any> printGrid(grid: Map<Coord, T>, fileName: String? = null) {
         val minX = grid.keys.minOf { it.x }
         val maxX = grid.keys.maxOf { it.x }
         val minY = grid.keys.minOf { it.y }
         val maxY = grid.keys.maxOf { it.y }
-        println()
+        var outputStr = "\n"
         for (i in minX..maxX) {
             var row = ""
             for (j in minY..maxY) {
                 row += grid[Coord(i, j)] ?: " "
             }
-            println(row)
+            outputStr += row
+            outputStr += '\n'
         }
-        println()
+        if (fileName != null) {
+            val file = File(fileName)
+            file.printWriter().use { out ->
+                out.println(outputStr)
+            }
+        } else {
+            println(outputStr)
+        }
     }
 
     fun <T : Any> findCoord(target: T, grid: MutableMap<Coord, T>): Coord {
