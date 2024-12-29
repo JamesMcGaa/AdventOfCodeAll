@@ -29,7 +29,6 @@ fun main() {
             (star.pos.fullNeighbors intersect starPos).isNotEmpty()
         }
         if (allAdj) {
-
             val grid = stars.associate { star -> Pair(star.pos, "#") }
             println("Part A:")
             Utils.printGrid(flip(rotateClockwise(grid)))
