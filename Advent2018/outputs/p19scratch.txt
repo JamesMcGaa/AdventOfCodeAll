@@ -1,0 +1,70 @@
+C += 16
+F = 1
+D = 1 -----------2
+
+Increment D from 1 to B
+if D is a factor of B add it to A
+E = D * F ------1
+E = check E == B
+C = C + E
+C += 1
+A += F
+D += 1
+E = check D > B
+C += E
+C = 2 --------1
+
+
+F += 1
+E = check F > B
+C += E
+C = 1 ------------2
+C = C^2 HALT
+B += 2 --- program starts here
+B = 10551292
+E = 10550400
+
+
+
+
+
+
+
+
+-----------------------------------
+C += 16
+F = 1
+D = 1
+E = D * F
+E =  check E == B
+C = C + E
+C += 1
+A += F
+D += 1
+E = check D > B
+C += E
+C = 2
+F += 1
+E = check F > B
+C += E
+C = 1
+C = C^2
+B += 2
+B = B^2
+B *= C
+B *= 11
+E += 2
+E = E * C
+E += 12
+B += E
+C += A
+C = 0
+E = C
+E *= C
+E += C
+E *= C
+E *= 11
+E *= C
+B += E
+A = 0
+C = 0
