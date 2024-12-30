@@ -272,4 +272,8 @@ object Utils {
     fun <T> Iterable<T>.freqCount(): Map<T, Int> {
         return this.groupingBy { it }.eachCount()
     }
+
+    fun extractIntListFromString(line: String): List<Int> {
+        return line.filter { it == ' ' || it.isDigit() }.split(" ").filter { it.isNotBlank() }.map { it.toInt() }
+    }
 }
