@@ -4,7 +4,13 @@ fun main() {
     run21(0)
 }
 
-
+/**
+ * Inspecting the input we can see that we perform a ton of operations
+ * and eventually compare F to A (our input and unchanged)
+ *
+ * Given this, we can inspect these compared F values and note that we eventually hit a cycle
+ * Thus our answers are the first and last values in this cycle
+ */
 fun run21(aOverride: Int) {
     val input = File("inputs/input21.txt").readLines()
     var instrIdx = input.first().filter { it.isDigit() }.toInt()
