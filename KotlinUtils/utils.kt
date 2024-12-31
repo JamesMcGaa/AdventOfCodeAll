@@ -1,18 +1,8 @@
 @file:Suppress("unused")
 
 import java.io.File
-import kotlin.collections.first
-import kotlin.collections.forEach
-import kotlin.collections.forEachIndexed
-import kotlin.collections.isNotEmpty
-import kotlin.collections.mapKeys
-import kotlin.collections.maxOf
-import kotlin.collections.minOf
-import kotlin.collections.plus
-import kotlin.collections.set
-import kotlin.io.readLines
+import java.util.*
 import kotlin.math.absoluteValue
-import kotlin.text.forEachIndexed
 
 object Utils {
     data class Coord(
@@ -267,6 +257,47 @@ object Utils {
             frontier = newFrontier
         }
         return dists
+    }
+
+    /**
+     * Credits to wikipedia,
+     *
+     * T is your state variable (generally Coord or similar)
+     */
+    fun <T> generalizedDijkstra(
+        start: T,
+        nodes: Set<T>,
+        neighbors: (T) -> Set<T>,
+        edgeWeight: (T, T) -> Int,
+    ): Pair<Map<T, Int>, Map<T, Set<T>>> {
+        val dist = mutableMapOf<T, Int>()
+        val prev = mutableMapOf<T, MutableSet<T>>()
+        nodes.forEach {
+            dist[it] = Int.MAX_VALUE / 2 // arbitrary
+            prev[it] = mutableSetOf()
+        }
+        dist[start] = 0
+        val queue = PriorityQueue<T> { v1, v2 -> dist[v1]!! - dist[v2]!! }
+        queue.addAll(nodes)
+        while (queue.isNotEmpty()) {
+            if (queue.size % 100 == 0) {
+                println(queue.size)
+            }
+            val min = queue.poll()
+            (neighbors(min) intersect queue).forEach { unrelaxedNeighbor ->
+                val altDist = dist[min]!! + edgeWeight(min, unrelaxedNeighbor)
+                if (altDist < dist[unrelaxedNeighbor]!!) {
+                    dist[unrelaxedNeighbor] = altDist
+                    prev[unrelaxedNeighbor]!!.clear()
+                    queue.remove(unrelaxedNeighbor)
+                    queue.add(unrelaxedNeighbor)
+                    prev[unrelaxedNeighbor]!!.add(min)
+                } else if (altDist == dist[unrelaxedNeighbor]!!) {
+                    prev[unrelaxedNeighbor]!!.add(min)
+                }
+            }
+        }
+        return Pair(dist, prev)
     }
 
     fun <T> Iterable<T>.freqCount(): Map<T, Int> {
