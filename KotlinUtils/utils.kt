@@ -260,6 +260,34 @@ object Utils {
     }
 
     /**
+     * Removes grid from above
+     */
+    fun <T> generalizedBFSV2(
+        start: T,
+        isLegal: (T) -> Boolean,
+        neighbors: (T) -> Set<T>,
+    ): MutableMap<T, Int> {
+        var frontier = mutableSetOf(start)
+        val seen = mutableSetOf<T>()
+        val dists = mutableMapOf<T, Int>()
+        var iterations = 0
+        while (frontier.isNotEmpty()) {
+            val newFrontier = mutableSetOf<T>()
+            frontier.forEach { frontierNode ->
+                if (frontierNode !in seen && isLegal(frontierNode)) {
+                    seen.add(frontierNode)
+                    dists[frontierNode] = iterations
+                    newFrontier.addAll(neighbors(frontierNode))
+                }
+            }
+            iterations++
+            frontier = newFrontier
+        }
+        return dists
+    }
+
+
+    /**
      * Credits to wikipedia,
      *
      * T is your state variable (generally Coord or similar)
@@ -280,9 +308,6 @@ object Utils {
         val queue = PriorityQueue<T> { v1, v2 -> dist[v1]!! - dist[v2]!! }
         queue.addAll(nodes)
         while (queue.isNotEmpty()) {
-            if (queue.size % 100 == 0) {
-                println(queue.size)
-            }
             val min = queue.poll()
             (neighbors(min) intersect queue).forEach { unrelaxedNeighbor ->
                 val altDist = dist[min]!! + edgeWeight(min, unrelaxedNeighbor)
@@ -304,7 +329,13 @@ object Utils {
         return this.groupingBy { it }.eachCount()
     }
 
-    fun extractIntListFromString(line: String): List<Int> {
-        return line.filter { it == ' ' || it.isDigit() }.split(" ").filter { it.isNotBlank() }.map { it.toInt() }
+    fun extractIntListFromString(line: String, legalBreaks: Set<Char> = setOf(' ')): List<Int> {
+        return line.filter { it in legalBreaks || it == '-' || it.isDigit() }.map { if (it in legalBreaks) ' ' else it }.joinToString("").split(" ")
+            .filter { it.isNotBlank() }.map { it.toInt() }
+    }
+
+    fun extractLongListFromString(line: String, legalBreaks: Set<Char> = setOf(' ')): List<Long> {
+        return line.filter { it in legalBreaks || it == '-' || it.isDigit() }.map { if (it in legalBreaks) ' ' else it }.joinToString("").split(" ")
+            .filter { it.isNotBlank() }.map { it.toLong() }
     }
 }
