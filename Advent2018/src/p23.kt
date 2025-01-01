@@ -19,6 +19,9 @@ fun main() {
      * Inspired by other Z3 solutions like https://github.com/msullivan/advent-of-code/blob/master/2018/23b.py
      *
      * Uses https://github.com/sosy-lab/java-smt for optimization
+     *
+     * Install the maven dep through intellij, then download the 3 dylib and jar files directly
+     * and add them to both java path and to the intellij libraries
      */
     val context: SolverContext = SolverContextFactory.createSolverContext(SolverContextFactory.Solvers.Z3)
     val imgr: IntegerFormulaManager = context.formulaManager.integerFormulaManager
