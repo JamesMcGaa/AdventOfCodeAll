@@ -3,7 +3,7 @@
 ![AOC Image](2017stars.png)
 # Context
 
-I originally completed most of this year in 2023, later revisiting 18-25 (which is where I will select favorites from) in 2024 - all in Kotlin.
+I originally completed most of this year in 2023, later revisiting 18-25 (which is where I will select favorites from) in 2024 - all in **Kotlin**.
 
 Overall this was an easier year, problems were straightforward to implement and did not require much optimization.
 # Favorite Problems 

@@ -3,7 +3,7 @@
 ![AOC Image](2020stars.png)
 # Context
 
-I originally completed most of this year (my first) in Python3. Later I revisited 19,20,22-25 in Kotlin.
+I originally completed most of this year (my first) in **Python3**. Later I revisited 19,20,22-25 in **Kotlin**.
 
 Overall many of these did not require too much optimizing, which lead to a pleasant focus on problem solving over coding details.
 # Favorite Problems

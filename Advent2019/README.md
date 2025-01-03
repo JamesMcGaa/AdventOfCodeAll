@@ -3,7 +3,7 @@
 ![AOC Image](stars.png)
 # Context
 
-I used Kotlin in Intellij to complete this year in its entirety. I do believe 2019 lives up to its reputation as one of the hardest Advent of Code years of all time.
+I used **Kotlin** in Intellij to complete this year in its entirety. I do believe 2019 lives up to its reputation as one of the hardest Advent of Code years of all time.
 
 Much success depends on how well you setup your Intcode computer which I didn't really get until I abstract classed it in p17.
 
