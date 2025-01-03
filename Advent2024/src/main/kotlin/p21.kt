@@ -1,14 +1,13 @@
 package main.kotlin
 
+import Utils
 import Utils.Coord
-import Utils.iterprint
 import java.io.File
 import kotlin.math.absoluteValue
-import kotlin.math.min
 
 
 fun main() {
-    fun generalizedDist(
+    fun generalizedShortestPath(
         numOrDistPad: MutableMap<Coord, Char>,
         memo: MutableMap<Pair<Char, Char>, List<Char>>,
         start: Char,
@@ -59,11 +58,12 @@ fun main() {
             repeat(verticalAmount.absoluteValue) {
                 ret.add(if (verticalAmount > 0) 'v' else '^')
             }
+            // In our DirPad, we want to do the < then v then ^ == > so we end up closest to A at the end
             ret.sortBy { ch ->
                 when (ch) {
                     '<' -> 0
-                    '^' -> 1
-                    'v' -> 2
+                    'v' -> 1
+                    '^' -> 2
                     '>' -> 3
                     else -> throw Exception()
                 }
@@ -103,6 +103,9 @@ fun main() {
     val dirDistMemo = mutableMapOf<Pair<Char, Char>, List<Char>>()
 
 
+    /**
+     * Legacy - we can't afford to keep all these in memory
+     */
     fun expand(toGo: Int, inp: List<Char>): Int {
         if (toGo == 0) {
             return inp.size
@@ -110,27 +113,50 @@ fun main() {
         var current = inp.last()
         val recurse = mutableListOf<Char>()
         for (ch in inp) {
-            recurse.addAll(generalizedDist(dirpad, dirDistMemo, current, ch, isNumpad = false))
+            recurse.addAll(generalizedShortestPath(dirpad, dirDistMemo, current, ch, isNumpad = false))
             current = ch
         }
         return expand(toGo - 1, recurse)
     }
 
-    fun runForInput(input: String): Int {
+    val expand2Memo = mutableMapOf<Pair<Int, List<Char>>, Long>()
+    fun expand2(toGo: Int, inp: List<Char>): Long {
+        if (toGo == 0) {
+            return inp.size.toLong()
+        }
+        val key = Pair(toGo, inp)
+        if (key in expand2Memo) {
+            return expand2Memo[key]!!
+        }
+        val shifted = listOf('A') + inp
+        var res = 0L
+        for (idx in inp.indices) {
+            val shortestPath = generalizedShortestPath(dirpad, dirDistMemo, shifted[idx], inp[idx], isNumpad = false)
+            res += expand2(toGo-1, shortestPath)
+        }
+        expand2Memo[key] = res
+        return res
+    }
+
+    fun runForInput(input: String, depth: Int): Long {
         var current = 'A'
         var ret = mutableListOf<Char>()
         for (ch in input) {
-            ret.addAll(generalizedDist(numpad, numpadDistMemo, current, ch, isNumpad = true))
+            ret.addAll(generalizedShortestPath(numpad, numpadDistMemo, current, ch, isNumpad = true))
             current = ch
         }
-        return expand(2, ret)
+        return expand2(depth, ret)
     }
 
 
     val partA = File("inputs/input21.txt").readLines().sumOf {
-        val res = runForInput(it)
-        println(res)
+        val res = runForInput(it, 2)
         res * it.removeSuffix("A").toInt()
     }
-    println(partA)
+    val partB = File("inputs/input21.txt").readLines().sumOf {
+        val res = runForInput(it, 25)
+        res * it.removeSuffix("A").toInt()
+    }
+    println("Part A: $partA")
+    println("Part A: $partB")
 }
