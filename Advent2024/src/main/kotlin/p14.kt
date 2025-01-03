@@ -1,4 +1,4 @@
-import main.kotlin.Utils.Coord
+import Utils.Coord
 import java.io.File
 
 data class BathroomGuard(

@@ -1,6 +1,6 @@
-import main.kotlin.Utils
-import main.kotlin.Utils.Coord
-import main.kotlin.Utils.Direction
+import Utils
+import Utils.Coord
+import Utils.Direction
 
 data class DirectionCoord(
     val coord: Coord,

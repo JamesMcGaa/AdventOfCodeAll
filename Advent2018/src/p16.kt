@@ -1,7 +1,7 @@
 import java.io.File
 
 fun main() {
-    val input = File("inputs/input15.txt").readLines()
+    val input = File("inputs/input16.txt").readLines()
     val samples = input.subList(0, 3111).chunked(4).map { sample ->
         sample.map { line -> Utils.extractIntListFromString(line) }
     }

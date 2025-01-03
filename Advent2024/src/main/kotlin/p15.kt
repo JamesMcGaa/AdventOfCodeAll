@@ -1,5 +1,5 @@
-import main.kotlin.Utils
-import main.kotlin.Utils.Coord
+import Utils
+import Utils.Coord
 import java.io.File
 import kotlin.collections.flatten
 

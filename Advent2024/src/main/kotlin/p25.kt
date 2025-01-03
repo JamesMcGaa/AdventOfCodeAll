@@ -2,7 +2,7 @@
 
 package main.kotlin
 
-import main.kotlin.Utils.Coord
+import Utils.Coord
 import java.io.File
 
 const val R = 7

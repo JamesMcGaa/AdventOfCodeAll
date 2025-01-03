@@ -338,4 +338,16 @@ object Utils {
         return line.filter { it in legalBreaks || it == '-' || it.isDigit() }.map { if (it in legalBreaks) ' ' else it }.joinToString("").split(" ")
             .filter { it.isNotBlank() }.map { it.toLong() }
     }
+
+    fun <T, V> iterprint(iter: Map<T, V>) {
+        for (item in iter) {
+            println(item)
+        }
+    }
+
+    fun <T> iterprint(iter: Iterable<T>) {
+        for (item in iter) {
+            println(item)
+        }
+    }
 }
