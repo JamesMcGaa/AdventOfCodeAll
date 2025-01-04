@@ -8,3 +8,4 @@ Primarily in **Kotlin IntelliJ** projects with a few in **Python** - most should
 
 For a few of the years I have a README in the subdirectory for the year with a recap and analysis of my favorite problems
 
+To use KotlinUtils/utils.kt go to Project Structure -> Project Settings -> Modules -> Add Content Root -> Then mark as Sources 
