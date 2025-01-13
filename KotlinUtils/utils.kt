@@ -240,7 +240,16 @@ object Utils {
         isLegal: (Coord, MutableMap<Coord, T>) -> Boolean,
         neighbors: (Coord, MutableMap<Coord, T>) -> Set<Coord>,
     ): MutableMap<Coord, Int> {
-        var frontier = mutableSetOf(start)
+        return generalizedBFS(grid, setOf(start), isLegal, neighbors)
+    }
+
+    fun <T> generalizedBFS(
+        grid: MutableMap<Coord, T>,
+        startSet: Collection<Coord>,
+        isLegal: (Coord, MutableMap<Coord, T>) -> Boolean,
+        neighbors: (Coord, MutableMap<Coord, T>) -> Set<Coord>,
+    ): MutableMap<Coord, Int> {
+        var frontier = startSet.toMutableSet()
         val seen = mutableSetOf<Coord>()
         val dists = mutableMapOf<Coord, Int>()
         var iterations = 0
@@ -348,6 +357,18 @@ object Utils {
     fun <T> iterprint(iter: Iterable<T>) {
         for (item in iter) {
             println(item)
+        }
+    }
+
+    fun Collection<Long>.median(): Double {
+        val sorted = this.sorted()
+        return when {
+            sorted.size % 2 == 0 -> {
+                val middle1 = sorted[sorted.size / 2 - 1]
+                val middle2 = sorted[sorted.size / 2]
+                (middle1 + middle2) / 2.0
+            }
+            else -> sorted[sorted.size / 2].toDouble()
         }
     }
 }
