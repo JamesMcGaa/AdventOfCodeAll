@@ -9,6 +9,15 @@ object Utils {
         var x: Int,
         var y: Int,
     ) {
+
+        companion object {
+            val LEFT_COORD = Coord(0, -1)
+            val RIGHT_COORD = Coord(0, 1)
+            val UP_COORD = Coord(-1, 0)
+            val DOWN_COORD = Coord(1, 0)
+
+        }
+
         val up
             get() = Coord(x = x - 1, y = y)
         val down
