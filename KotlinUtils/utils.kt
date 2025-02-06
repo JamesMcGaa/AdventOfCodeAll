@@ -5,6 +5,47 @@ import java.util.*
 import kotlin.math.absoluteValue
 
 object Utils {
+    data class ZCoord(
+        var x: Int,
+        var y: Int,
+        var z: Int,
+    ) {
+
+        val manhattanDist = x.absoluteValue + y.absoluteValue + z.absoluteValue
+
+        val manhattanNeighbors: Set<ZCoord>
+            get() = setOf(
+                LEFT_COORD,
+                RIGHT_COORD,
+                UP_COORD,
+                DOWN_COORD,
+                FORWARD_COORD,
+                BACKWARD_COORD
+            ).map { this + it }.toSet()
+
+        companion object {
+            val LEFT_COORD = ZCoord(0, -1, 0)
+            val RIGHT_COORD = ZCoord(0, 1, 0)
+            val UP_COORD = ZCoord(-1, 0, 0)
+            val DOWN_COORD = ZCoord(1, 0, 0)
+            val FORWARD_COORD = ZCoord(0, 0, 1)
+            val BACKWARD_COORD = ZCoord(0, 0, -1)
+
+        }
+
+        operator fun plus(other: ZCoord): ZCoord {
+            return ZCoord(x + other.x, y + other.y, z + other.z)
+        }
+
+        operator fun minus(other: ZCoord): ZCoord {
+            return ZCoord(x - other.x, y - other.y, z - other.z)
+        }
+    }
+
+    enum class ZDirection {
+        UP, DOWN, LEFT, RIGHT, FORWARDS, BACKWARDS
+    }
+
     data class Coord(
         var x: Int,
         var y: Int,
@@ -348,12 +389,14 @@ object Utils {
     }
 
     fun extractIntListFromString(line: String, legalBreaks: Set<Char> = setOf(' ')): List<Int> {
-        return line.filter { it in legalBreaks || it == '-' || it.isDigit() }.map { if (it in legalBreaks) ' ' else it }.joinToString("").split(" ")
+        return line.filter { it in legalBreaks || it == '-' || it.isDigit() }.map { if (it in legalBreaks) ' ' else it }
+            .joinToString("").split(" ")
             .filter { it.isNotBlank() }.map { it.toInt() }
     }
 
     fun extractLongListFromString(line: String, legalBreaks: Set<Char> = setOf(' ')): List<Long> {
-        return line.filter { it in legalBreaks || it == '-' || it.isDigit() }.map { if (it in legalBreaks) ' ' else it }.joinToString("").split(" ")
+        return line.filter { it in legalBreaks || it == '-' || it.isDigit() }.map { if (it in legalBreaks) ' ' else it }
+            .joinToString("").split(" ")
             .filter { it.isNotBlank() }.map { it.toLong() }
     }
 
@@ -377,6 +420,7 @@ object Utils {
                 val middle2 = sorted[sorted.size / 2]
                 (middle1 + middle2) / 2.0
             }
+
             else -> sorted[sorted.size / 2].toDouble()
         }
     }
