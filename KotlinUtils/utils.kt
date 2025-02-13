@@ -52,11 +52,11 @@ object Utils {
     ) {
 
         companion object {
+            val ORIGIN = Coord(0, 0)
             val LEFT_COORD = Coord(0, -1)
             val RIGHT_COORD = Coord(0, 1)
             val UP_COORD = Coord(-1, 0)
             val DOWN_COORD = Coord(1, 0)
-
         }
 
         val up
@@ -97,6 +97,15 @@ object Utils {
         operator fun minus(other: Coord): Coord {
             return Coord(x - other.x, y - other.y)
         }
+
+        operator fun times(other: Int): Coord {
+            return Coord(x * other, y * other)
+        }
+
+        override fun toString(): String {
+            return "($x, $y)"
+        }
+
 
         fun moveDir(dir: Direction): Coord {
             return when (dir) {
@@ -163,9 +172,7 @@ object Utils {
         }
         if (fileName != null) {
             val file = File(fileName)
-            file.printWriter().use { out ->
-                out.println(outputStr)
-            }
+            file.appendText(outputStr)
         } else {
             println(outputStr)
         }
@@ -261,14 +268,24 @@ object Utils {
         }
     }
 
-    fun <T> rotateClockwise(grid: Map<Coord, T>): Map<Coord, T> {
+    fun <T> rotateClockwise(grid: Map<Coord, T>, shouldNormalize: Boolean = true): Map<Coord, T> {
         var newGrid = mutableMapOf<Coord, T>()
         grid.forEach { coord, value ->
             newGrid[Coord(coord.y, -coord.x)] = value
         }
+        if (!shouldNormalize) {
+            return newGrid
+        }
         val minX = newGrid.keys.minOf { it.x }
         val minY = newGrid.keys.minOf { it.y }
         return newGrid.mapKeys { (coord, _) -> Coord(coord.x - minX, coord.y - minY) }
+    }
+
+    fun <T> rotateCounterclockwise(grid: Map<Coord, T>, shouldNormalize: Boolean = true): Map<Coord, T> {
+        return rotateClockwise(
+            rotateClockwise(rotateClockwise(grid, shouldNormalize), shouldNormalize),
+            shouldNormalize
+        )
     }
 
     fun <T> flip(grid: Map<Coord, T>): Map<Coord, T> {
