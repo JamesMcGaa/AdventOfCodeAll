@@ -1,5 +1,7 @@
 @file:Suppress("unused")
 
+import com.google.common.collect.Collections2
+import com.google.common.collect.Sets
 import java.io.File
 import java.util.*
 import kotlin.math.absoluteValue
@@ -440,5 +442,42 @@ object Utils {
 
             else -> sorted[sorted.size / 2].toDouble()
         }
+    }
+
+    fun crtSolve(equations: List<Pair<Long, Long>>): Long {
+        val N = equations.map { it.second }.reduce { acc, i -> acc * i }
+        return equations.sumOf { pair ->
+            val a_i = pair.first
+            val n_i = pair.second
+            val y_i = N / n_i
+            val z_i = modInverse(y_i, n_i)
+            a_i * y_i * z_i!! % N
+        } % N
+    }
+
+    fun extendedGcd(a: Long, b: Long): Triple<Long, Long, Long> {
+        if (b == 0L) return Triple(a, 1L, 0L)
+        val (g, x1, y1) = extendedGcd(b, a % b)
+        val x = y1
+        val y = x1 - (a / b) * y1
+        return Triple(g, x, y)
+    }
+
+    fun modInverse(a: Long, m: Long): Long? {
+        val (g, x, _) = extendedGcd(a, m)
+        if (g != 1L) return null
+        return Math.floorMod(x, m)
+    }
+
+    // T : Any for Java - Kotlin interop
+    fun <T : Any> orderedSubsets(elements: Collection<T>, n: Int): List<List<T>> {
+        val allOrderedSubsets = mutableListOf<List<T>>()
+        val setElements = elements.toSet()
+        val combinations = Sets.combinations(setElements, n)
+        for (combination in combinations) {
+            val permutations = Collections2.permutations(combination)
+            allOrderedSubsets.addAll(permutations.map { it.toList() })
+        }
+        return allOrderedSubsets
     }
 }
