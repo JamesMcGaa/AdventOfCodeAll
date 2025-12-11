@@ -480,4 +480,18 @@ object Utils {
         }
         return allOrderedSubsets
     }
+
+    class SlidingWindow<T : Any>(val maxSize: Long) {
+        val window = ArrayDeque<T>()
+
+        fun addAndPotentiallyRemove(element: T): T? {
+            window.addLast(element)
+            return if (window.size > maxSize) {
+                window.removeFirst()
+            } else {
+                null
+            }
+        }
+
+    }
 }
