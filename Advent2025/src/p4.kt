@@ -18,10 +18,10 @@ fun p4b(filename: String): Long {
         val accessible = grid.filter { (coord, char) ->
             char == '@' && coord.fullNeighbors.count { grid[it] == '@' } < 4
         }
-        if (accessible.size == 0) {
+        if (accessible.isEmpty()) {
             break
         } else {
-            accessible.forEach { (coord, char) ->
+            accessible.forEach { (coord, _) ->
                 grid[coord] = '.'
             }
         }
