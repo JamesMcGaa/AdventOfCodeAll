@@ -5,8 +5,47 @@ import com.google.common.collect.Sets
 import java.io.File
 import java.util.*
 import kotlin.math.absoluteValue
+import kotlin.math.sqrt
 
 object Utils {
+    data class ZCoordLong(
+        var x: Long,
+        var y: Long,
+        var z: Long,
+    ) {
+
+        val manhattanDist = x.absoluteValue + y.absoluteValue + z.absoluteValue
+        val dist = sqrt((x * x + y * y + z * z).toDouble())
+
+        val manhattanNeighbors: Set<ZCoordLong>
+            get() = setOf(
+                LEFT_COORD,
+                RIGHT_COORD,
+                UP_COORD,
+                DOWN_COORD,
+                FORWARD_COORD,
+                BACKWARD_COORD
+            ).map { this + it }.toSet()
+
+        companion object {
+            val LEFT_COORD = ZCoordLong(0, -1, 0)
+            val RIGHT_COORD = ZCoordLong(0, 1, 0)
+            val UP_COORD = ZCoordLong(-1, 0, 0)
+            val DOWN_COORD = ZCoordLong(1, 0, 0)
+            val FORWARD_COORD = ZCoordLong(0, 0, 1)
+            val BACKWARD_COORD = ZCoordLong(0, 0, -1)
+
+        }
+
+        operator fun plus(other: ZCoordLong): ZCoordLong {
+            return ZCoordLong(x + other.x, y + other.y, z + other.z)
+        }
+
+        operator fun minus(other: ZCoordLong): ZCoordLong {
+            return ZCoordLong(x - other.x, y - other.y, z - other.z)
+        }
+    }
+
     data class ZCoord(
         var x: Int,
         var y: Int,
@@ -14,6 +53,7 @@ object Utils {
     ) {
 
         val manhattanDist = x.absoluteValue + y.absoluteValue + z.absoluteValue
+        val dist = sqrt((x * x + y * y + z * z).toDouble())
 
         val manhattanNeighbors: Set<ZCoord>
             get() = setOf(
@@ -47,6 +87,11 @@ object Utils {
     enum class ZDirection {
         UP, DOWN, LEFT, RIGHT, FORWARDS, BACKWARDS
     }
+
+    data class CoordLong(
+        var x: Long,
+        var y: Long,
+    )
 
     data class Coord(
         var x: Int,
@@ -271,7 +316,7 @@ object Utils {
     }
 
     fun <T> rotateClockwise(grid: Map<Coord, T>, shouldNormalize: Boolean = true): Map<Coord, T> {
-        var newGrid = mutableMapOf<Coord, T>()
+        val newGrid = mutableMapOf<Coord, T>()
         grid.forEach { coord, value ->
             newGrid[Coord(coord.y, -coord.x)] = value
         }
@@ -291,7 +336,7 @@ object Utils {
     }
 
     fun <T> flip(grid: Map<Coord, T>): Map<Coord, T> {
-        var newGrid = mutableMapOf<Coord, T>()
+        val newGrid = mutableMapOf<Coord, T>()
         val maxY = grid.keys.maxOf { it.y }
         grid.forEach { coord, value ->
             newGrid[Coord(coord.x, maxY - coord.y)] = value
@@ -383,7 +428,7 @@ object Utils {
             prev[it] = mutableSetOf()
         }
         dist[start] = 0
-        val queue = PriorityQueue<T> { v1, v2 -> dist[v1]!! - dist[v2]!! }
+        val queue = PriorityQueue<T & Any> { v1, v2 -> dist[v1]!! - dist[v2]!! }
         queue.addAll(nodes)
         while (queue.isNotEmpty()) {
             val min = queue.poll()
@@ -493,5 +538,62 @@ object Utils {
             }
         }
 
+    }
+
+
+    fun Collection<Long>.product(): Long {
+        return this.fold(1L) { acc, element -> acc * element }
+    }
+
+    fun Collection<Int>.product(): Int {
+        return this.fold(1) { acc, element -> acc * element }
+    }
+
+    class DisjointRangeSet() {
+        data class InclusiveRange(
+            val start: Long,
+            val end: Long,
+        ) {
+            val size = end - start + 1
+            companion object {
+                fun intersect(rangeA: InclusiveRange, rangeB: InclusiveRange): InclusiveRange? {
+                    val start = maxOf(rangeA.start, rangeB.start)
+                    val end = minOf(rangeA.end, rangeB.end)
+
+                    return if (start <= end) {
+                        InclusiveRange(start, end)
+                    } else {
+                        null
+                    }
+                }
+            }
+        }
+
+        var ranges: MutableList<InclusiveRange> = mutableListOf()
+
+        fun add(newRange: InclusiveRange) {
+            ranges.add(newRange)
+            merge()
+        }
+
+        fun merge() {
+            val sortedRanges: List<InclusiveRange> = ranges.sortedBy { it.start }
+            val result: MutableList<InclusiveRange> = mutableListOf()
+            var start = sortedRanges[0].start
+            var end = sortedRanges[0].end
+
+            for (range: InclusiveRange in sortedRanges.drop(1)) {
+                if (range.start <= end + 1) {
+                    end = maxOf(end, range.end)
+                } else {
+                    result.add(InclusiveRange(start, end))
+                    start = range.start
+                    end = range.end
+                }
+            }
+
+            result.add(InclusiveRange(start, end))
+            ranges = result
+        }
     }
 }
