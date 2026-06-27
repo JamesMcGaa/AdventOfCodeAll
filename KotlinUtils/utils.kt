@@ -204,10 +204,7 @@ object Utils {
     }
 
     fun <T : Any> printGrid(grid: Map<Coord, T>, fileName: String? = null) {
-        val minX = grid.keys.minOf { it.x }
-        val maxX = grid.keys.maxOf { it.x }
-        val minY = grid.keys.minOf { it.y }
-        val maxY = grid.keys.maxOf { it.y }
+        val (minX, maxX, minY, maxY) = getGridRange(grid)
         var outputStr = "\n"
         for (i in minX..maxX) {
             var row = ""
@@ -227,6 +224,31 @@ object Utils {
 
     fun <T : Any> findCoord(target: T, grid: MutableMap<Coord, T>): Coord {
         return grid.keys.first { grid[it] == target }
+    }
+
+    fun <T : Any> findAllCoords(target: T, grid: MutableMap<Coord, T>): Set<Coord> {
+        return grid.keys.filter { grid[it] == target }.toSet()
+    }
+
+    data class Quadruple<out A, out B, out C, out D>(
+        val first: A,
+        val second: B,
+        val third: C,
+        val fourth: D
+    )
+
+    fun <T : Any> getGridRange(grid: Map<Coord, T>): Quadruple<Int, Int, Int, Int> {
+        return Quadruple(
+            grid.keys.minOf { it.x },
+            grid.keys.maxOf { it.x },
+            grid.keys.minOf { it.y },
+            grid.keys.maxOf { it.y },
+        )
+    }
+
+    fun <T : Any> inbounds(key: Coord, grid: Map<Coord, T>, possibleBounds: Quadruple<Int, Int, Int, Int>? = null): Boolean {
+        val (minX, maxX, minY, maxY) = possibleBounds ?: getGridRange(grid)
+        return key.x in minX..maxX && key.y in minY..maxY
     }
 
     data class CircularLinkedListNode<T>(
@@ -555,6 +577,7 @@ object Utils {
             val end: Long,
         ) {
             val size = end - start + 1
+
             companion object {
                 fun intersect(rangeA: InclusiveRange, rangeB: InclusiveRange): InclusiveRange? {
                     val start = maxOf(rangeA.start, rangeB.start)
